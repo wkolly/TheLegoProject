@@ -2,7 +2,23 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model IQueryable<Product>
+<h1>Welcome to Our Lego Store</h1>
+<p>We have a large collection of amazing legos with personalized recommendations for every customer.</p>
+<partial name="_CookieConsentPartial" />
+<div class="row">
+    @foreach (Product p in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="breadcrumb h-100">
+                <a href="@Url.Action("ProductDetails", "Home", new { id = p.ProductId })" style="text-decoration: none; color: inherit;">
+                    <img src="@p.ImgLink" alt="@p.Name" class="card-img-top" style="width:100%; height:auto; margin-bottom: 20px">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">@p.Name</h4>
+                        <h5 class="card-price" style="font-weight: bold;">$@p.Price</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
 </div>
