@@ -1,0 +1,28 @@
+@model TheLegoProject.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="EditProduct" method="post">
+    <input type="hidden" asp-for="ProductId" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <!-- Add additional fields for other product properties similarly -->
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="DisplayProducts">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

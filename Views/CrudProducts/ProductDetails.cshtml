@@ -1,0 +1,20 @@
+@model TheLegoProject.Models.Product
+
+<h2>Product Details</h2>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Name:</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+        
+        <!-- Include other details -->
+        <dt class="col-sm-2">Year:</dt>
+        <dd class="col-sm-10">@Model.Year</dd>
+        
+        <!-- Repeat for other properties -->
+    </dl>
+</div>
+
+<div>
+    <a asp-action="DisplayProducts">Back to List</a>
+</div>

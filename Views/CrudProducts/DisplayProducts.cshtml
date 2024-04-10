@@ -1,0 +1,41 @@
+@model IEnumerable<TheLegoProject.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Number of Parts</th>
+            <th>Price</th>
+            <th>Primary Color</th>
+            <th>Secondary Color</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Name</td>
+            <td>@product.Year</td>
+            <td>@product.NumParts</td>
+            <td>@product.Price</td>
+            <td>@product.PrimaryColor</td>
+            <td>@product.SecondaryColor</td>
+            <td>
+                <a asp-action="EditProduct" asp-route-id="@product.ProductId">Edit</a> |
+                <a asp-action="ProductDetails" asp-route-id="@product.ProductId">Details</a> |
+                <a asp-action="DeleteProduct" asp-route-id="@product.ProductId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-action="CreateProduct">Add New Product</a>
