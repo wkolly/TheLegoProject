@@ -7,10 +7,10 @@
 <p>We have a large collection of amazing legos with personalized recommendations for every customer.</p>
 <form asp-action="Products" method="get">
     Display by 
-    <select name="pageSize" onchange="this.form.submit()">
+    <select name="pageSize" onchange="updateUrl()">
         <option value="5" selected="@(Model.PaginationInfo.ItemsPerPage == 5)">5</option>
-        <option value="10" selected="@(Model.PaginationInfo.ItemsPerPage == 10)">10</option>
-        <option value="15" selected="@(Model.PaginationInfo.ItemsPerPage == 15)">15</option>
+            <option value="10" selected="@(Model.PaginationInfo.ItemsPerPage == 10)">10</option>
+            <option value="15" selected="@(Model.PaginationInfo.ItemsPerPage == 15)">15</option>
     </select>
     <select asp-for="SelectedCategory" asp-items="@(new SelectList(Model.Categories))" onchange="this.form.submit()">
         <option value="">All Categories</option>
@@ -38,6 +38,15 @@
     }
 </div>
 <div style="text-align: center;">
-    <div page-model="@Model.PaginationInfo" page-classes-enabled="true" page-action="Products" page-class="btn" 
-         page-class-normal="btn-primary" page-class-selected="btn-outline-dark"></div>
+    <div page-url-pageSize="@Model.PaginationInfo.ItemsPerPage" page-model="@Model.PaginationInfo" page-classes-enabled="true" page-action="Products" page-class="btn" 
+         page-class-normal="btn-primary" page-class-selected="btn-outline-dark" ></div>
 </div>
+<script>
+    function updateUrl() {
+        var pageSize = document.querySelector('select[name="pageSize"]').value;
+        var selectedCategory = document.querySelector('select[name="SelectedCategory"]').value;
+        var selectedColor = document.querySelector('select[name="SelectedColor"]').value;
+        var url = '@Url.Action("Products", "Home")?pageNum=1&pageSize=' + pageSize + '&selectedCategory=' + encodeURIComponent(selectedCategory) + '&selectedColor=' + encodeURIComponent(selectedColor);
+        window.location.href = url;
+    }
+</script>
