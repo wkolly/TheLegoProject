@@ -7,6 +7,8 @@ namespace TheLegoProject.Models
         IQueryable<Product> Products { get; }
         
         IQueryable<Recommendation> Recommendations { get; }
+        IQueryable<CustRecommendation> CustRecommendations { get; }
+         IQueryable<Order> Orders { get; }
 
         // Get a list of all products
         IEnumerable<Product> GetAllProducts();
