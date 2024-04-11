@@ -58,7 +58,6 @@ public class HomeController : Controller
        
     }
     
-    
     public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "", string selectedColor = "")
     {
         pageSize ??= 5; // Default to 5 if no value is provided
