@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using TheLegoProject.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,27 +23,61 @@ public class HomeController : Controller
     
     public IActionResult Index()
     {
-        var recData = _repo.Recommendations
-            .Join(_repo.Products, 
-                recommendation => recommendation.ProductId, // Assuming a common key exists
-                product => product.ProductId, // Replace with the actual common key
-                (recommendation, product) => new ProductRecommendationViewModel
+        if (User.Identity.IsAuthenticated)
+        {
+            // Hardcoded customer ID for demonstration purposes
+            int customerId = 1; // Replace with the actual logged-in customer ID
+
+            // Fetch personalized recommendations for the logged-in user and evaluate them in-memory
+            var customerRecommendations = _repo.CustRecommendations
+                .Where(c => c.CustomerId == customerId)
+                .ToList(); // Bring into memory to use client-side evaluation for the next operations
+
+            var productNames = customerRecommendations
+                .SelectMany(c => new[] { c.Rec1, c.Rec2, c.Rec3, c.Rec4, c.Rec5 }) // Now we're in-memory, so SelectMany will work
+                .Distinct();
+
+            var personalizedRecData = _repo.Products
+                .Where(p => productNames.Contains(p.Name)) // This will be translated to SQL WHERE IN
+                .Select(product => new ProductRecommendationViewModel
                 {
                     Name = product.Name,
                     ImgLink = product.ImgLink,
                     Price = product.Price,
-                    PopScore = recommendation.PopScore,
-                    Rec1 = recommendation.Rec1,
-                    Rec2 = recommendation.Rec2,
-                    Rec3 = recommendation.Rec3,
-                    Rec4 = recommendation.Rec4,
-                    Rec5 = recommendation.Rec5
+                    // Map other properties as needed
                 })
-            .OrderBy(x => x.PopScore)
-            .Take(6)
-            .ToList();
+                .ToList();
 
-        return View(recData);
+
+            return View(personalizedRecData);
+
+        }
+        
+        else
+        {
+            var recData = _repo.Recommendations
+                .Join(_repo.Products, 
+                    recommendation => recommendation.ProductId, // Assuming a common key exists
+                    product => product.ProductId, // Replace with the actual common key
+                    (recommendation, product) => new ProductRecommendationViewModel
+                    {
+                        Name = product.Name,
+                        ImgLink = product.ImgLink,
+                        Price = product.Price,
+                        PopScore = recommendation.PopScore,
+                        Rec1 = recommendation.Rec1,
+                        Rec2 = recommendation.Rec2,
+                        Rec3 = recommendation.Rec3,
+                        Rec4 = recommendation.Rec4,
+                        Rec5 = recommendation.Rec5
+                    })
+                .OrderBy(x => x.PopScore)
+                .Take(6)
+                .ToList();
+
+            return View(recData);
+        }
+        
     }
 
 

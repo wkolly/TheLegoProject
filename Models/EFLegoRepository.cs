@@ -13,7 +13,9 @@ namespace TheLegoProject.Models;
 
         public IQueryable<Product> Products => _context.Products;
         public IQueryable<Recommendation> Recommendations => _context.Recommendations;
-        
+        public IQueryable<CustRecommendation> CustRecommendations => _context.CustRecommendations;
+
+        public IQueryable<Order> Orders => _context.Orders;
         public IEnumerable<Product> GetAllProducts()
         {
             return _context.Products.ToList();
