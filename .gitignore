@@ -4,3 +4,5 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 .vs/
+# Friends don't let friends commit secrets!!!
+*secrets.json
