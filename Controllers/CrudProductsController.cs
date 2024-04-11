@@ -50,28 +50,23 @@ namespace TheLegoProject.Controllers
     }
 
     [HttpGet]
-    // public IActionResult EditProduct(int id)
-    // {
-    //     var product = _repo.GetProductById(id.ToString()); // Assuming GetProductById is the synchronous version
-    //     if (product == null)
-    //     {
-    //         return View("ProductNotFound");
-    //     }
-    //     return View(product);
-    // }
+     public IActionResult EditProduct(int id)
+     {
+         var product = _repo.GetProductById(id); // Assuming GetProductById is the synchronous version
+         if (product == null)
+         {
+             return View("ProductNotFound");
+         }
+         return View(product);
+     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditProduct(int id, Product product)
+    public IActionResult EditProduct(int id,[Bind("ProductId,Year,NumParts,Price,PrimaryColor,SecondaryColor,Description,ImgLink,Category,Subcategory")] Product product)
     {
-        if (id != product.ProductId)
-        {
-            return View("ProductNotFound");
-        }
-
         if (ModelState.IsValid)
         {
-            _repo.UpdateProduct(product); // Assuming UpdateProduct is the synchronous version
+            _repo.UpdateProduct(id, product);
             return RedirectToAction(nameof(DisplayProducts));
         }
         return View(product);
@@ -90,7 +85,7 @@ namespace TheLegoProject.Controllers
 
     [HttpPost, ActionName("DeleteProduct")]
     [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(string id)
+    public IActionResult DeleteConfirmed(int id)
     {
         _repo.DeleteProduct(id); // Assuming DeleteProduct is the synchronous version
         return RedirectToAction(nameof(DisplayProducts));

@@ -30,15 +30,24 @@ namespace TheLegoProject.Models;
             _context.SaveChanges();
         }
 
-        public void UpdateProduct(Product product)
+        public void UpdateProduct(int productId, Product updatedProduct)
         {
-            _context.Entry(product).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-
-        public void DeleteProduct(string productId)
-        {
-            throw new NotImplementedException();
+            var productInDb = _context.Products.FirstOrDefault(p => p.ProductId == productId);
+            if (productInDb != null)
+            {
+                // Update only the specified fields
+                productInDb.Year = updatedProduct.Year;
+                productInDb.NumParts = updatedProduct.NumParts;
+                productInDb.Price = updatedProduct.Price;
+                productInDb.PrimaryColor = updatedProduct.PrimaryColor;
+                productInDb.SecondaryColor = updatedProduct.SecondaryColor;
+                productInDb.Category = updatedProduct.Category;
+                productInDb.Description = updatedProduct.Description;
+                productInDb.Subcategory = updatedProduct.Subcategory;
+                productInDb.ImgLink = updatedProduct.ImgLink;
+                
+                _context.SaveChanges();
+            }
         }
 
         public void DeleteProduct(int productId)

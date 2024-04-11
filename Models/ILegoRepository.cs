@@ -18,9 +18,9 @@ namespace TheLegoProject.Models
         void AddProduct(Product product);
 
         // Update an existing product
-        void UpdateProduct(Product product);
+        void UpdateProduct(int id, Product product);
 
         // Delete a product by ID
-        void DeleteProduct(string productId);
+        void DeleteProduct(int productId);
     }
 }

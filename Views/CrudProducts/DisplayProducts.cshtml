@@ -4,19 +4,24 @@
     ViewData["Title"] = "Products";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center" style="color: #333; margin-bottom: 30px;">@ViewData["Title"]</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Year</th>
-            <th>Number of Parts</th>
-            <th>Price</th>
-            <th>Primary Color</th>
-            <th>Secondary Color</th>
-            <th>Actions</th>
-        </tr>
+<div class="text-right mb-3">
+    <!-- Add New Product Button at the top -->
+    <a asp-action="CreateProduct" class="btn btn-outline-primary">Add New Product</a>
+</div>
+
+<table class="table table-hover">
+    <thead style="background-color: #4e5d6c; color: #fff;">
+    <tr>
+        <th>Name</th>
+        <th>Year</th>
+        <th>Number of Parts</th>
+        <th>Price</th>
+        <th>Primary Color</th>
+        <th>Secondary Color</th>
+        <th>Actions</th>
+    </tr>
     </thead>
     <tbody>
     @foreach (var product in Model)
@@ -25,17 +30,31 @@
             <td>@product.Name</td>
             <td>@product.Year</td>
             <td>@product.NumParts</td>
-            <td>@product.Price</td>
+            <td>@product.Price</td> <!-- Format as currency -->
             <td>@product.PrimaryColor</td>
             <td>@product.SecondaryColor</td>
             <td>
-                <a asp-action="EditProduct" asp-route-id="@product.ProductId">Edit</a> |
-                <a asp-action="ProductDetails" asp-route-id="@product.ProductId">Details</a> |
-                <a asp-action="DeleteProduct" asp-route-id="@product.ProductId">Delete</a>
+                <a asp-action="EditProduct" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-success">Edit</a>
+                <a asp-action="ProductDetails" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-info">Details</a>
+                <a asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-danger">Delete</a>
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-<a asp-action="CreateProduct">Add New Product</a>
+<!-- Back to Top Button at the bottom -->
+<div class="text-center mt-4">
+    <a href="#" class="btn btn-outline-secondary">Back to Top</a>
+</div>
+
+@section Scripts {
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth scrolling to the Back to Top button
+        document.querySelector('.btn-secondary').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+}
