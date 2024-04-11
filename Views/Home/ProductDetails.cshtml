@@ -39,47 +39,146 @@
     </div>
   </div>
 </div>
-<div class="col-md-3">
-    <div class="recommendations">
-        <h4>Recommended Products</h4>
-        <div class="recommendation-list">
-            @if (!string.IsNullOrEmpty(Model.Rec1))
-            {
-                <div class="recommendation-item">
-                    <img src="@Model.Rec1ImgLink" alt="@Model.Rec1" class="recommendation-image">
-                    <div class="recommendation-name">@Model.Rec1</div>
+@* <div class="col-md-3"> *@
+@*     <div class="recommendations-banner"> *@
+@*         <div class="container"> *@
+@*             <br/> *@
+@*             <h4>Recommended Products</h4> *@
+@*             <div class="recommendation-list"> *@
+@*                 @if (!string.IsNullOrEmpty(Model.Rec1)) *@
+@*                 { *@
+@*                     <div class="recommendation-item"> *@
+@*                         <img src="@Model.Rec1ImgLink" alt="@Model.Rec1" class="recommendation-image"> *@
+@*                         <div class="recommendation-name">@Model.Rec1</div> *@
+@*                     </div> *@
+@*                 } *@
+@*                 @if (!string.IsNullOrEmpty(Model.Rec2)) *@
+@*                 { *@
+@*                     <div class="recommendation-item"> *@
+@*                         <img src="@Model.Rec2ImgLink" alt="@Model.Rec2" class="recommendation-image"> *@
+@*                         <div class="recommendation-name">@Model.Rec2</div> *@
+@*                     </div> *@
+@*                 } *@
+@*                 @if (!string.IsNullOrEmpty(Model.Rec3)) *@
+@*                 { *@
+@*                     <div class="recommendation-item"> *@
+@*                         <img src="@Model.Rec3ImgLink" alt="@Model.Rec3" class="recommendation-image"> *@
+@*                         <div class="recommendation-name">@Model.Rec3</div> *@
+@*                     </div> *@
+@*                 } *@
+@*                 @if (!string.IsNullOrEmpty(Model.Rec4)) *@
+@*                 { *@
+@*                     <div class="recommendation-item"> *@
+@*                         <img src="@Model.Rec4ImgLink" alt="@Model.Rec4" class="recommendation-image"> *@
+@*                         <div class="recommendation-name">@Model.Rec4</div> *@
+@*                     </div> *@
+@*                 } *@
+@*                 @if (!string.IsNullOrEmpty(Model.Rec5)) *@
+@*                 { *@
+@*                     <div class="recommendation-item"> *@
+@*                         <img src="@Model.Rec5ImgLink" alt="@Model.Rec5" class="recommendation-image"> *@
+@*                         <div class="recommendation-name">@Model.Rec5</div> *@
+@*                     </div> *@
+@*                 } *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+            <br/>
+            @* <h4>Recommended Products</h4> *@
+            @* <div class="recommendation-list"> *@
+            @*     @if (!string.IsNullOrEmpty(Model.Rec1)) *@
+            @*     { *@
+            @*         <div class="recommendation-item"> *@
+            @*             <img src="@Model.Rec1ImgLink" alt="@Model.Rec1" class="recommendation-image"> *@
+            @*             <div class="recommendation-name">@Model.Rec1</div> *@
+            @*         </div> *@
+            @*     } *@
+            @*     @if (!string.IsNullOrEmpty(Model.Rec2)) *@
+            @*     { *@
+            @*         <div class="recommendation-item"> *@
+            @*             <img src="@Model.Rec2ImgLink" alt="@Model.Rec2" class="recommendation-image"> *@
+            @*             <div class="recommendation-name">@Model.Rec2</div> *@
+            @*         </div> *@
+            @*     } *@
+            @*     @if (!string.IsNullOrEmpty(Model.Rec3)) *@
+            @*     { *@
+            @*         <div class="recommendation-item"> *@
+            @*             <img src="@Model.Rec3ImgLink" alt="@Model.Rec3" class="recommendation-image"> *@
+            @*             <div class="recommendation-name">@Model.Rec3</div> *@
+            @*         </div> *@
+            @*     } *@
+            @*     @if (!string.IsNullOrEmpty(Model.Rec4)) *@
+            @*     { *@
+            @*         <div class="recommendation-item"> *@
+            @*             <img src="@Model.Rec4ImgLink" alt="@Model.Rec4" class="recommendation-image"> *@
+            @*             <div class="recommendation-name">@Model.Rec4</div> *@
+            @*         </div> *@
+            @*     } *@
+            @*     @if (!string.IsNullOrEmpty(Model.Rec5)) *@
+            @*     { *@
+            @*         <div class="recommendation-item"> *@
+            @*             <img src="@Model.Rec5ImgLink" alt="@Model.Rec5" class="recommendation-image"> *@
+            @*             <div class="recommendation-name">@Model.Rec5</div> *@
+            @*         </div> *@
+            @*     } *@
+            @* </div> *@
+            <br/>
+            <h2>Recommended Products</h2>
+            <br/>
+<div class="container">
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Model.Rec1))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="breadcrumb h-100">
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = Model.Rec1 })" style="text-decoration: none; color: inherit;">
+                        <img src="@Model.Rec1ImgLink" alt="@Model.Rec1" class="card-img-top" style="width:100%; height:auto; margin-bottom: 20px">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.Rec1</h4>
+                        </div>
+                    </a>
                 </div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Rec2))
-            {
-                <div class="recommendation-item">
-                    <img src="@Model.Rec2ImgLink" alt="@Model.Rec2" class="recommendation-image">
-                    <div class="recommendation-name">@Model.Rec2</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Rec2))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="breadcrumb h-100">
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = Model.not })" style="text-decoration: none; color: inherit;">
+                        <img src="@Model.Rec2ImgLink" alt="@Model.Rec2" class="card-img-top" style="width:100%; height:auto; margin-bottom: 20px">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.Rec2</h4>
+                        </div>
+                    </a>
                 </div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Rec3))
-            {
-                <div class="recommendation-item">
-                    <img src="@Model.Rec3ImgLink" alt="@Model.Rec3" class="recommendation-image">
-                    <div class="recommendation-name">@Model.Rec3</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Rec3))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="breadcrumb h-100">
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = Model.Rec3 })" style="text-decoration: none; color: inherit;">
+                        <img src="@Model.Rec3ImgLink" alt="@Model.Rec3" class="card-img-top" style="width:100%; height:auto; margin-bottom: 20px">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.Rec3</h4>
+                        </div>
+                    </a>
                 </div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Rec4))
-            {
-                <div class="recommendation-item">
-                    <img src="@Model.Rec4ImgLink" alt="@Model.Rec4" class="recommendation-image">
-                    <div class="recommendation-name">@Model.Rec4</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Rec4))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="breadcrumb h-100">
+                    <a href="@Url.Action("ProductDetails", "Home", new { id = Model.Rec4 })" style="text-decoration: none; color: inherit;">
+                        <img src="@Model.Rec4ImgLink" alt="@Model.Rec4" class="card-img-top" style="width:100%; height:auto; margin-bottom: 20px">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">@Model.Rec4</h4>
+                        </div>
+                    </a>
                 </div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Rec5))
-            {
-                <div class="recommendation-item">
-                    <img src="@Model.Rec5ImgLink" alt="@Model.Rec5" class="recommendation-image">
-                    <div class="recommendation-name">@Model.Rec5</div>
-                </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
-
-
