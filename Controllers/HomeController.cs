@@ -40,32 +40,52 @@ public class HomeController : Controller
        
     }
     
-    [Authorize(Roles="Admin")]
-    public IActionResult Products(int pageNum, int? pageSize)
+    public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "", string selectedColor = "")
     {
         pageSize ??= 5; // Default to 5 if no value is provided
         var pageSizeOptions = new List<int> { 5, 10, 15 }; // The available page size options
 
-        var blah = new ProductsListViewModel
-        {
-            Products = _repo.Products
-                .OrderBy(x => x.Name)
-                .Skip((pageNum - 1) * pageSize.Value)
-                .Take(pageSize.Value),
+        // Filter based on category and color
+        var filteredProducts = _repo.Products.AsQueryable();
 
+        if (!string.IsNullOrEmpty(selectedCategory))
+        {
+            filteredProducts = filteredProducts.Where(p => p.Category == selectedCategory);
+        }
+
+        if (!string.IsNullOrEmpty(selectedColor))
+        {
+            filteredProducts = filteredProducts.Where(p => p.PrimaryColor == selectedColor);
+        }
+
+        // Get distinct categories and colors for the dropdowns
+        var categories = _repo.Products.Select(p => p.Category).Distinct().ToList();
+        var colors = _repo.Products.Select(p => p.PrimaryColor).Distinct().ToList();
+
+        // Apply pagination after filtering
+        var paginatedProducts = filteredProducts
+            .OrderBy(x => x.Name)
+            .Skip((pageNum - 1) * pageSize.Value)
+            .Take(pageSize.Value)
+            .ToList(); // Convert to list here, assuming the repository call doesn't execute immediately
+
+        var viewModel = new ProductsListViewModel
+        {
+            Products = paginatedProducts,
             PaginationInfo = new PaginationInfo
             {
                 CurrentPage = pageNum,
                 ItemsPerPage = pageSize.Value,
-                TotalItems = _repo.Products.Count()
+                TotalItems = filteredProducts.Count() // Count the filtered list
             },
-
-            PageSizeOptions = pageSizeOptions
-            
-
+            PageSizeOptions = pageSizeOptions,
+            SelectedCategory = selectedCategory,
+            SelectedColor = selectedColor,
+            Categories = categories,
+            Colors = colors
         };
-        
-        return View(blah);
+
+        return View(viewModel);
     }
 
     

@@ -5,16 +5,22 @@
 @model ProductsListViewModel
 <h1>All products</h1>
 <p>We have a large collection of amazing legos with personalized recommendations for every customer.</p>
-<form asp-action="Products" method="get">Display by 
+<form asp-action="Products" method="get">
+    Display by 
     <select name="pageSize" onchange="this.form.submit()">
         <option value="5" selected="@(Model.PaginationInfo.ItemsPerPage == 5)">5</option>
         <option value="10" selected="@(Model.PaginationInfo.ItemsPerPage == 10)">10</option>
         <option value="15" selected="@(Model.PaginationInfo.ItemsPerPage == 15)">15</option>
     </select>
+    <select asp-for="SelectedCategory" asp-items="@(new SelectList(Model.Categories))" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+    </select>
+    <select asp-for="SelectedColor" asp-items="@(new SelectList(Model.Colors))" onchange="this.form.submit()">
+        <option value="">All Colors</option>
+    </select>
     <input type="hidden" name="pageNum" value="@Model.PaginationInfo.CurrentPage" />
 </form>
 <br/>
-<partial name="_CookieConsentPartial" />
 <div class="row">
     @foreach (Product p in Model.Products)
     {
