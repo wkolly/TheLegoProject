@@ -43,7 +43,7 @@ namespace TheLegoProject.Infrastructure;
                 for (int i = 1; i <= PageModel.TotalNumPages; i++)
                 {
                     TagBuilder tag = new TagBuilder("a");
-                    tag.Attributes["href"] = urlHelper.Action(PageAction, new { pageNum = i });
+                    tag.Attributes["href"] = urlHelper.Action(PageAction, new { pageNum = i, pageSize = PageModel.ItemsPerPage });
                     
                     if (PageClassesEnabled)
                     {

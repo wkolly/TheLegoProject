@@ -8,6 +8,9 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using TheLegoProject.Models;
 using TheLegoProject.Models.ViewModels;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using TheLegoProject.Infrastructure;
 
 namespace TheLegoProject.Controllers;
 
@@ -95,9 +98,12 @@ public class HomeController : Controller
     
     public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "", string selectedColor = "")
     {
-        pageSize ??= 5; // Default to 5 if no value is provided
+        Console.WriteLine(pageSize);
+        
+        pageSize ??= 5;
+        Console.WriteLine(pageSize);// Default to 5 if no value is provided
         var pageSizeOptions = new List<int> { 5, 10, 15 }; // The available page size options
-
+        
         // Filter based on category and color
         var filteredProducts = _repo.Products.AsQueryable();
 
@@ -203,6 +209,17 @@ public class HomeController : Controller
 
         return "/images/default.jpg";
     }
+
+    public IActionResult Checkout()
+    {
+        return View();
+    }
+
+    public IActionResult Bag()
+    {
+        return View();
+    }
+
 
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

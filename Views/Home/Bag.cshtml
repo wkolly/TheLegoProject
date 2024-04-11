@@ -1,0 +1,159 @@
+@model List<ProductRecommendationViewModel>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bag</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width:850px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            text-align: center; /* Center the header text */
+            background-color: #F2F2F2;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056B3;
+        }
+        /* Flexbox styling for quantity input */
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center horizontally */
+        }
+        .quantity-container button {
+            margin-right: 2px; /* Adjust the spacing between buttons */
+            margin-left: 2px;
+        }
+        .quantity-input {
+            width: 40px; /* Adjust the width of the input box */
+            color: #0b1c32;
+        }
+    </style>
+</head>
+<body>
+    <h2>Checkout</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="item-list">
+          
+            <!-- Add more rows for other products -->
+            
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3">Total</td>
+                <td id="total">$15.00</td>
+            </tr>
+        </tfoot>
+    </table>
+    <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Checkout">Proceed to Checkout</a>
+    <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Continue Shopping</a>
+    <!-- Include Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <script>
+        function loadCart() {
+            var cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+            var itemList = document.getElementById('item-list');
+            itemList.innerHTML = ''; // Clear the existing list
+            cart.forEach(function (product) {
+                var row = `
+                        <tr>
+                            <td>${product.Name}</td>
+                            <td>
+                                <div class="quantity-container">
+                                    <button class="btn btn-primary" onclick="decrementQuantity(this)">-</button>
+                                    <input type="text" name="quantity" class="form-control quantity-input" value="1">
+                                    <button class="btn btn-primary" onclick="incrementQuantity(this)">+</button>
+                                </div>
+                            </td>
+                            <td>$${product.Price}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i>Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                itemList.innerHTML += row;
+            });
+            updateTotal();
+        }
+        function incrementQuantity(button) {
+            var input = button.parentNode.querySelector('input[type=text]');
+            var currentValue = parseInt(input.value);
+            console.log(currentValue)
+            input.value = currentValue + 1;
+            updateTotal();
+        }
+        function decrementQuantity(button) {
+            var input = button.parentNode.querySelector('input[type=text]');
+            var currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+                updateTotal();
+            }
+        }
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            updateTotal();
+        }
+        function updateTotal() {
+            var total = 0;
+            var items = document.querySelectorAll('#item-list tr');
+            items.forEach(function(item) {
+                var quantity = parseInt(item.querySelector('.quantity-input').value);
+                var price = parseFloat(item.querySelector('td:nth-child(3)').textContent.replace('$', ''));
+                total += quantity * price;
+            });
+            document.getElementById('total').textContent = '$' + total.toFixed(2);
+        }
+        loadCart();
+    </script>
+</body>
+</html>

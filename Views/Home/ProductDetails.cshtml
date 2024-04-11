@@ -1,11 +1,32 @@
 @model ProductRecommendationViewModel
 
+@{
+    var settings = new Newtonsoft.Json.JsonSerializerSettings
+    {
+        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    };
+    var jsonModel = Newtonsoft.Json.JsonConvert.SerializeObject(Model, settings);
+}
+
 <div class="nav-pills" style="display: flex; align-items: start; margin-top: 50px">
   <img src="@Model.ImgLink" alt="@Model.Name" style="flex-shrink: 0; width:500px; height:auto; margin-right: 50px;">
   <div style="flex-grow: 1;">
     <h2>@Model.Name</h2>
     <h3 style="font-weight: bold">$@Model.Price</h3>
-    
+    @section Scripts {
+        <script>
+            function addToCart(product) {
+                var cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+                cart.push(product);
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                var button = document.getElementById("addToBagButton");
+                button.innerHTML = '<i class="fas fa-check"></i> Item Added';
+                button.classList.remove("btn-secondary");
+                button.classList.add("btn-success");
+            }
+        </script>
+<button id="addToBagButton" class="btn btn-secondary" onclick="addToCart(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">Add to Bag</button>
+    }
     <div class="accordion" id="accordionExample">
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
@@ -26,14 +47,14 @@
           </button>
         </h2>
         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample" style="">
-          <div class="accordion-body">
-            <strong>@Model.Name</strong><br/>
-            Category: @Model.Category<br/>
-            Year: @Model.Year<br/>
-            No. of parts: @Model.NumParts<br/>
-            Primary color: @Model.PrimaryColor<br/>
-            Secondary color: @Model.SecondaryColor
-          </div>
+            <div class="accordion-body">
+                <strong>@Model.Name</strong><br/>
+                Category: @Model.Category<br/>
+                Year: @Model.Year<br/>
+                No. of parts: @Model.NumParts<br/>
+                Primary color: @Model.PrimaryColor<br/>
+                Secondary color: @Model.SecondaryColor
+            </div>
         </div>
       </div>
     </div>

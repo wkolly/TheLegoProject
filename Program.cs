@@ -42,6 +42,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>().AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 builder.Services.AddHsts(options =>
 {
     options.Preload = true;
@@ -53,6 +57,10 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 var app = builder.Build();
 
