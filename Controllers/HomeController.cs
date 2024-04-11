@@ -22,12 +22,30 @@ public class HomeController : Controller
     
     public IActionResult Index()
     {
-        var recData = _repo.Products
-            .OrderBy(x => x.Name)
-            .Take(6);
+        var recData = _repo.Recommendations
+            .Join(_repo.Products, 
+                recommendation => recommendation.ProductId, // Assuming a common key exists
+                product => product.ProductId, // Replace with the actual common key
+                (recommendation, product) => new ProductRecommendationViewModel
+                {
+                    Name = product.Name,
+                    ImgLink = product.ImgLink,
+                    Price = product.Price,
+                    PopScore = recommendation.PopScore,
+                    Rec1 = recommendation.Rec1,
+                    Rec2 = recommendation.Rec2,
+                    Rec3 = recommendation.Rec3,
+                    Rec4 = recommendation.Rec4,
+                    Rec5 = recommendation.Rec5
+                })
+            .OrderBy(x => x.PopScore)
+            .Take(6)
+            .ToList();
+
         return View(recData);
-        
     }
+
+
 
     public IActionResult Privacy()
     {
@@ -40,7 +58,12 @@ public class HomeController : Controller
        
     }
     
+<<<<<<< Updated upstream
     public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "", string selectedColor = "")
+=======
+    
+    public IActionResult Products(int pageNum, int? pageSize)
+>>>>>>> Stashed changes
     {
         pageSize ??= 5; // Default to 5 if no value is provided
         var pageSizeOptions = new List<int> { 5, 10, 15 }; // The available page size options
@@ -88,12 +111,67 @@ public class HomeController : Controller
         return View(viewModel);
     }
     
-
-
     public IActionResult ProductDetails(int id)
     {
-        var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
-        return View("ProductDetails", product);
+    var productRecommendation = _repo.Products
+        .Join(
+            _repo.Recommendations,
+            product => product.ProductId,
+            recommendation => recommendation.ProductId,
+            (product, recommendation) => new ProductRecommendationViewModel
+            {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                ImgLink = product.ImgLink,
+                Price = product.Price,
+                PopScore = recommendation.PopScore,
+                Rec1 = recommendation.Rec1,
+                Rec2 = recommendation.Rec2,
+                Rec3 = recommendation.Rec3,
+                Rec4 = recommendation.Rec4,
+                Rec5 = recommendation.Rec5,
+                PrimaryColor = product.PrimaryColor,
+                SecondaryColor = product.SecondaryColor,
+                Description = product.Description,
+                Category = product.Category,
+                Subcategory = product.Subcategory,
+                Year = product.Year,
+                NumParts = product.NumParts,
+                Rec1ImgLink = GetImageLink(recommendation.Rec1),
+                Rec2ImgLink = GetImageLink(recommendation.Rec2),
+                Rec3ImgLink = GetImageLink(recommendation.Rec3),
+                Rec4ImgLink = GetImageLink(recommendation.Rec4),
+                Rec5ImgLink = GetImageLink(recommendation.Rec5)
+            }
+        )
+        .FirstOrDefault(pr => pr.ProductId == id);
+
+    if (productRecommendation == null)
+    {
+        return NotFound();
+    }
+
+    return View("ProductDetails", productRecommendation);
+}
+
+    private static string GetImageLink(string productName)
+    {
+        if (string.IsNullOrEmpty(productName))
+        {
+            return "/images/default.jpg";
+        }
+
+        using (var context = new LegoDatabase2Context())
+        {
+            var product = context.Products.FirstOrDefault(p => p.Name == productName);
+
+            if (product != null && !string.IsNullOrEmpty(product.ImgLink))
+            {
+                return product.ImgLink;
+            }
+        }
+
+        return "/images/default.jpg";
     }
 
 

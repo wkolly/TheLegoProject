@@ -2,12 +2,12 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model IQueryable<Product>
+@model List<ProductRecommendationViewModel>
 <h1>Welcome to Our Lego Store</h1>
 <p>We have a large collection of amazing legos with personalized recommendations for every customer.</p>
 <partial name="_CookieConsentPartial" />
 <div class="row">
-    @foreach (Product p in Model)
+    @foreach (ProductRecommendationViewModel p in Model)
     {
         <div class="col-md-4 mb-4">
             <div class="breadcrumb h-100">
