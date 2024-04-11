@@ -141,7 +141,7 @@ public class HomeController : Controller
         return View(viewModel);
     }
     
-    public IActionResult ProductDetails(int id)
+    public IActionResult ProductDetails(string id)
     {
     var productRecommendation = _repo.Products
         .Join(
@@ -174,7 +174,7 @@ public class HomeController : Controller
                 Rec5ImgLink = GetImageLink(recommendation.Rec5)
             }
         )
-        .FirstOrDefault(pr => pr.ProductId == id);
+        .FirstOrDefault(pr => pr.Name == id);
 
     if (productRecommendation == null)
     {
