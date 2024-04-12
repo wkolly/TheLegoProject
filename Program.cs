@@ -9,8 +9,7 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 
 
-
-
+// Add the secrets.json file.
 // Add the secrets.json file.
 builder.Configuration.AddJsonFile("secrets.json",
     optional: false,
@@ -21,6 +20,7 @@ services.AddAuthentication().AddGoogle(googleOptions =>
     googleOptions.ClientId = configuration.GetSection("Authentication:Google:ClientId").Value;
     googleOptions.ClientSecret = configuration.GetSection("Authentication:Google:ClientSecret").Value;
 });
+
 
 
 
