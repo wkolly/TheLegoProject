@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace TheLegoProject.Models;
 
@@ -9,7 +10,7 @@ public partial class Order
 
     public int? CustomerId { get; set; }
 
-    public string? Date { get; set; }
+    public DateTime? Date { get; set; }
 
     public string? DayOfWeek { get; set; }
 

@@ -11,6 +11,8 @@ using TheLegoProject.Models.ViewModels;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using TheLegoProject.Infrastructure;
+using System;
+
 
 namespace TheLegoProject.Controllers;
 
@@ -47,7 +49,7 @@ public class HomeController : Controller
             // TransactionId should be auto-generated if it's an identity column in the database,
             // so no need to set it here unless you are overriding database defaults.
             CustomerId = model.CustomerId,
-            Date = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+            //Date = DateTime.UtcNow.ToString("yyyy-MM-dd"),
             DayOfWeek = DateTime.UtcNow.DayOfWeek.ToString(),
             Time = DateTime.UtcNow.Hour,
             EntryMode = "Online",  // This should match your business logic or data model requirements
@@ -142,13 +144,21 @@ public class HomeController : Controller
         foreach (var record in records)
         {
             float dateFloat = float.Parse(record.Date.GetHashCode().ToString());
-
+            
+            var january1_2022 = new DateTime(2022, 1, 1);
+      
+            
+            var daysSinceJan12022 = record.Date.HasValue ? Math.Abs((record.Date.Value - january1_2022).Days) : 0;
+            
+                
             var input = new List<float>
             {
+              
                 (int)record.CustomerId,
                 (int)record.Time,
                 (float)(record.Amount ?? 0),
                 dateFloat,
+                daysSinceJan12022,
                 record.DayOfWeek == "Mon" ? 1 : 0,
                 record.DayOfWeek == "Sat" ? 1 : 0,
                 record.DayOfWeek == "Sun" ? 1 : 0,
@@ -193,6 +203,7 @@ public class HomeController : Controller
         }
         return View(predictions);
     }
+      
 
     public IActionResult Privacy()
     {
