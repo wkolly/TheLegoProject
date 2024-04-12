@@ -140,9 +140,24 @@
         }
         function deleteRow(button) {
             var row = button.parentNode.parentNode;
+            var productName = row.cells[0].textContent; // Assuming the product name is unique
+            var cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+        
+            // Find the index of the product in the cart
+            var productIndex = cart.findIndex(function(product) {
+                return product.Name === productName;
+            });
+        
+            // Remove the product from the cart if it exists
+            if (productIndex !== -1) {
+                cart.splice(productIndex, 1);
+                sessionStorage.setItem('cart', JSON.stringify(cart)); // Update the session storage
+            }
+        
             row.parentNode.removeChild(row);
             updateTotal();
         }
+
         function updateTotal() {
             var total = 0;
             var items = document.querySelectorAll('#item-list tr');

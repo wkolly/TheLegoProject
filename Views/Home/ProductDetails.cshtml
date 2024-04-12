@@ -9,10 +9,26 @@
 }
 
 <div class="nav-pills" style="display: flex; align-items: start; margin-top: 50px">
-  <img src="@Model.ImgLink" alt="@Model.Name" style="flex-shrink: 0; width:500px; height:auto; margin-right: 50px;">
-  <div style="flex-grow: 1;">
-    <h2>@Model.Name</h2>
-    <h3 style="font-weight: bold">$@Model.Price</h3>
+    <img src="@Model.ImgLink" alt="@Model.Name" style="flex-shrink: 0; width:500px; height:auto; margin-right: 50px;">
+    <!-- Flex container for the title and button -->
+    <div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <button id="addToBagButton" class="btn btn-secondary" onclick="addToCart(@jsonModel)">
+            Add to Bag
+        </button>
+    </div>
+  <div style="flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+      <h2>@Model.Name</h2>
+      <h3 style="font-weight: bold">$@Model.Price</h3>
+      <!-- Rest of your content -->
+    </div>
+  </div>
     @section Scripts {
         <script>
             function addToCart(product) {
@@ -59,7 +75,7 @@
       </div>
     </div>
   </div>
-</div>
+
 @* <div class="col-md-3"> *@
 @*     <div class="recommendations-banner"> *@
 @*         <div class="container"> *@
