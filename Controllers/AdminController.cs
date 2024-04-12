@@ -108,8 +108,26 @@ public class AdminController : Controller
         // Model state is invalid or user creation failed
         return View();
     }
+    // GET: Admin/DeleteUser/5
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return View("Error"); // Or a custom error message if ID is not provided
+        }
+
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            return View("Error"); // Or a custom message if user not found
+        }
+
+        return View(user); // Passing user to the view to show details and ask for confirmation
+    }
+// POST: Admin/ConfirmDelete
     [HttpPost]
-    public async Task<IActionResult> DeleteUser(string userId)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmDelete(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user != null)
@@ -117,16 +135,17 @@ public class AdminController : Controller
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
-                // Handle success
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                // Handle failure
+                // Handle failure: You might want to log the failure or show a message
+                ModelState.AddModelError("", "Failed to delete user.");
+                return View("DeleteUser", user); // Redirect back to delete confirmation if failure
             }
         }
-        // User not found or some other issue
-        return RedirectToAction(nameof(Index));
+
+        return View("Error"); // User not found or some other issue
     }
     // GET: Admin/EditUser/5
     [HttpGet]
