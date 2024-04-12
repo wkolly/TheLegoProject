@@ -8,10 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+
+
 // Add the secrets.json file.
 builder.Configuration.AddJsonFile("secrets.json",
     optional: false,
@@ -22,10 +21,9 @@ services.AddAuthentication().AddGoogle(googleOptions =>
     googleOptions.ClientId = configuration.GetSection("Authentication:Google:ClientId").Value;
     googleOptions.ClientSecret = configuration.GetSection("Authentication:Google:ClientSecret").Value;
 });
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
