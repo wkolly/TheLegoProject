@@ -36,6 +36,45 @@ public class HomeController : Controller
         }
     }
     
+    [HttpPost]
+    public async Task<IActionResult> Checkout(ProductRecommendationViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model); // Return the view with validation errors
+        }
+
+        // Assuming Amount is not a collection and doesn't need to be summed up,
+        // this line assumes model.Amount correctly holds the total to be charged
+        // If model.Amount does not exist and you need to calculate it based on items,
+        // you would need a different approach possibly involving a list of items in the model.
+    
+        var order = new Order
+        {
+            // TransactionId should be auto-generated if it's an identity column in the database,
+            // so no need to set it here unless you are overriding database defaults.
+            CustomerId = model.CustomerId,
+            Date = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+            DayOfWeek = DateTime.UtcNow.DayOfWeek.ToString(),
+            Time = DateTime.UtcNow.Hour,
+            EntryMode = "Online",  // This should match your business logic or data model requirements
+            Amount = model.Amount, // This should be a decimal or double type in your Order model
+            TypeOfTransaction = "Sale",
+            CountryOfTransaction = "USA",
+            ShippingAddress = model.ShippingAddress,
+            Bank = "DefaultBank",
+            TypeOfCard = "Visa",
+            Fraud = 0 // Assuming default to no fraud detected
+        };
+
+        _repo.AddOrder(order);
+        await _repo.SaveChangesAsync();
+
+        // Assuming you want to redirect to an action that shows order details or confirmation
+        // Redirect to a confirmation page or a similar one after the order is saved
+        return RedirectToAction("Checkout", new { orderId = order.TransactionId });
+    }
+    
     public IActionResult Index()
     {
         if (User.Identity.IsAuthenticated)
@@ -67,7 +106,6 @@ public class HomeController : Controller
             return View(personalizedRecData);
 
         }
-        
         else
         {
             var recData = _repo.Recommendations
@@ -222,8 +260,16 @@ public class HomeController : Controller
         return "/images/default.jpg";
     }
 
-    public IActionResult Checkout()
+    public IActionResult Checkout(string id)
     {
+        // Check if the user is logged in
+        if (!User.Identity.IsAuthenticated)
+        {
+            // If the user is not logged in, redirect them to the home page
+            return RedirectToAction("Index", "Home");
+        }
+
+        // If the user is logged in, display the Checkout view
         return View();
     }
 
