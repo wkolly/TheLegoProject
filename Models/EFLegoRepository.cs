@@ -25,11 +25,28 @@ namespace TheLegoProject.Models;
         {
             return _context.Products.FirstOrDefault(p => p.ProductId == productId);
         }
+        public Order AddOrder(Order order)
+        {
+            _context.Orders.Add(order);
+            return order;
+
+    }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public void SaveChanges(Order newOrder)
+        {
+            _context.SaveChanges();
+        }
 
         public void AddProduct(Product product)
         {
             _context.Products.Add(product);
             _context.SaveChanges();
+            
         }
 
         public void UpdateProduct(int productId, Product updatedProduct)
@@ -51,6 +68,7 @@ namespace TheLegoProject.Models;
                 _context.SaveChanges();
             }
         }
+       
 
         public void DeleteProduct(int productId)
         {
@@ -61,4 +79,14 @@ namespace TheLegoProject.Models;
                 _context.SaveChanges();
             }
         }
+        
+        
+        
+        
     }
+
+   
+
+    
+
+   
