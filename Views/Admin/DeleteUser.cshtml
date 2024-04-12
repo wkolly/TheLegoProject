@@ -1,0 +1,50 @@
+@model Microsoft.AspNetCore.Identity.IdentityUser
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Confirm Deletion</h3>
+                </div>
+                <div class="card-body">
+                    <p class="font-weight-bold text-dark">Are you sure you want to delete the user <span class="text-danger">"@Model.Email"</span>?</p>
+                    <form asp-action="ConfirmDelete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.Id" />
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger btn-lg" style="margin-right: 20px;">Delete</button>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-lg {
+    padding: .75rem 1.5rem; /* Larger padding for a more substantial button */
+    font-size: 1.05rem; /* Slightly larger font size for readability */
+    border-radius: .25rem; /* Rounded corners for a modern look */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all .2s ease-in-out; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for buttons */
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Active/focus effect for buttons */
+.btn-lg:active, .btn-lg:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+</style>

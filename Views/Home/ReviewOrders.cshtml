@@ -1,0 +1,47 @@
+@model IEnumerable<TheLegoProject.Models.OrderPrediction>
+
+@{
+    ViewData["Title"] ="Predictions" ;
+    var classTypeDict = new Dictionary<int, string>
+    {
+        { 0, "Not Fraud" },
+        { 1, "Fraud" }
+    };
+}
+<h2>Predictions</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>TransactionId</th>
+            <th>CustomerId</th>
+            <th>Date</th>
+            <th>DayOfWeek</th>
+            <th>Time</th>
+            <th>Amount</th>
+            <th>TypeOfTransaction</th>
+            <th>Bank</th>
+            <th>TypeOfCard</th>
+            <th>Fraud</th>
+            <th class = "prediction-cell">Fraud Prediction</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Orders.TransactionId </td>
+                <td>@item.Orders.CustomerId </td>
+                <td>@item.Orders.Date </td>
+                <td>@item.Orders.DayOfWeek </td>
+                <td>@item.Orders.Time </td>
+                <td>@item.Orders.Amount </td>
+                <td>@item.Orders.TypeOfTransaction </td>
+                <td>@item.Orders.Bank </td>
+                <td>@item.Orders.TypeOfCard </td>
+                <td>@item.Orders.Fraud </td>
+                <td class="prediction-cell">@item.Prediction</td>
+            </tr>    
+        }
+    </tbody>
+</table>
