@@ -6,21 +6,6 @@ using TheLegoProject.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var configuration = builder.Configuration;
-
-
-// Add the secrets.json file.
-builder.Configuration.AddJsonFile("secrets.json",
-    optional: false,
-    reloadOnChange: true);
-services.AddAuthentication().AddGoogle(googleOptions =>
-
-{
-    googleOptions.ClientId = configuration.GetSection("Authentication:Google:ClientId").Value;
-    googleOptions.ClientSecret = configuration.GetSection("Authentication:Google:ClientSecret").Value;
-});
-
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
