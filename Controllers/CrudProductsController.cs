@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using TheLegoProject.Models;
 using TheLegoProject.Data;
 
 namespace TheLegoProject.Controllers
 {
+    [Authorize(Roles = "Admin")] // Only users in the "Admin" role can access actions in this controller
     public class CrudProductsController : Controller
 {
     private readonly ILegoRepository _repo;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TheLegoProject.Controllers;
 
-[Authorize] // Adjust according to your authorization strategy
+[Authorize(Roles = "Admin")] // Only users in the "Admin" role can access actions in this controller
 public class AdminController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
