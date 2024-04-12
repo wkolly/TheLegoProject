@@ -8,17 +8,22 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using TheLegoProject.Models;
 using TheLegoProject.Models.ViewModels;
+<<<<<<< Updated upstream
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using TheLegoProject.Infrastructure;
 using System;
 
+=======
+using Microsoft.ML.OnnxRuntime.Tensors; 
+>>>>>>> Stashed changes
 
 namespace TheLegoProject.Controllers;
 
 public class HomeController : Controller
 {
     
+<<<<<<< Updated upstream
     private ILegoRepository _repo;
     private readonly InferenceSession _session;
     private readonly string _onnxModelPath;
@@ -68,6 +73,25 @@ public class HomeController : Controller
         // Assuming you want to redirect to an action that shows order details or confirmation
         // Redirect to a confirmation page or a similar one after the order is saved
         return RedirectToAction("Checkout", new { orderId = order.TransactionId });
+=======
+    private readonly ILegoRepository _repo;
+        
+    private InferenceSession _session;
+    public HomeController(ILegoRepository temp)
+    {
+        _repo = temp;
+        try
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string onnxFilePath = Path.Combine(currentDirectory, "decision_tree_model.onnx");
+            _session = new InferenceSession(onnxFilePath);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine();
+            throw;
+        }
+>>>>>>> Stashed changes
     }
     
     public IActionResult Index()
@@ -128,6 +152,7 @@ public class HomeController : Controller
         }
         
     }
+<<<<<<< Updated upstream
       public IActionResult ReviewOrders()
     {
         var records = _repo.Orders
@@ -204,6 +229,28 @@ public class HomeController : Controller
         return View(predictions);
     }
       
+=======
+
+    public IActionResult Predict(int customer, int time, int amount , int date_11, int date3,int date7 , int date8, int Mon , int Sat, int Sun, 
+        int Thur, int Tue, int Wed, string entryPin, string entryTap, string typetransactiononline, string typeoftransactionPOS, string countryoftransactionIndia, string countryoftransactionRussia, string countryoftransaction_USA, string country_of_transaction_United_Kingdom, string shipping_address_India, string shipping_address_Russia, string shipping_address_USA, string shipping_address_United_Kingdom, string bank_HSBC, string bank_Halifax, string bank_Lloyds, string bank_Metro, string bank_Monzo, string bank_RBS, string type_of_card_Visa  )
+    {
+        var class_type_dict = new Dictionary<int, string>
+        {
+            { 0, "not fraud" },
+            { 1, "fraud" }
+        };
+
+        try
+        {
+            var input = new List<float>()
+        }
+        catch (Exception)
+        {
+            Console.WriteLine();
+            throw;
+        }
+
+>>>>>>> Stashed changes
 
     public IActionResult Privacy()
     {
