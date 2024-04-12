@@ -40,14 +40,11 @@ var roles = ViewBag.Roles as SelectList;
             <a href="@Url.Action("EditUser", new { userId = user.UserId })" class="btn btn-secondary btn-md">Edit</a>
         </td>
         <td>
-            @using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this user?');" }))
-            {
-            @Html.AntiForgeryToken()
-
-            <input type="hidden" name="userId" value="@user.UserId" />
-            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-            }
+            <a href="@Url.Action("DeleteUser", "Admin", new { id = user.UserId })" class="btn btn-sm btn-outline-danger">
+                Delete
+            </a>
         </td>
+
     </tr>
     }
     </tbody>
