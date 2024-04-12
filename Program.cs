@@ -50,6 +50,7 @@ builder.Services.AddHsts(options =>
     options.MaxAge = TimeSpan.FromDays(60);
 });
 
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddDistributedMemoryCache();

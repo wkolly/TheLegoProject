@@ -4,7 +4,15 @@
     ViewData["Title"] = "Edit Product";
 }
 
+<!-- Back arrow link at the top of the page -->
+<div style="margin-bottom: 20px;">
+    <a href="#" onclick="history.back();" class="btn btn-link" style="color: #007BFF; text-decoration: none;">
+        &#x2190; Back
+    </a>
+</div>
+
 <h2>@ViewData["Title"]]</h2>
+
 
 <form asp-action="EditProduct" method="post">
     <input type="hidden" asp-for="ProductId" />
@@ -68,7 +76,8 @@
             <input asp-for="ImgLink" class="form-control" />
             <span asp-validation-for="ImgLink" class="text-danger"></span>
         </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+    <div class="form-group" style="margin-top: 20px;">
+        <input type="submit" value="Save" class="btn btn-sm btn-outline-success" />
+        <a class="btn btn-sm btn-outline-danger" asp-action="DisplayProducts" style="margin-left: 8px;" >Cancel</a>
     </div>
 </form>

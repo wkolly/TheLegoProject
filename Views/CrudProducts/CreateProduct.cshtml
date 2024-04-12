@@ -5,22 +5,77 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+<div style="margin-bottom: 20px;">
+    <a href="#" onclick="history.back();" class="btn btn-link" style="color: #007BFF; text-decoration: none;">
+        &#x2190; Back
+    </a>
+</div>
 
 <form asp-action="CreateProduct" method="post">
     <div class="form-group">
-        <label asp-for="Name"></label>
+        <label asp-for="Name">Name</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <!-- Add additional fields for other product properties similarly -->
+
+    <div class="form-group">
+        <label asp-for="Year">Year</label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NumParts">Number of Parts</label>
+        <input asp-for="NumParts" class="form-control" />
+        <span asp-validation-for="NumParts" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PrimaryColor">Primary Color</label>
+        <input asp-for="PrimaryColor" class="form-control" />
+        <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SecondaryColor">Secondary Color</label>
+        <input asp-for="SecondaryColor" class="form-control" />
+        <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category">Category</label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Subcategory">Subcategory</label>
+        <input asp-for="Subcategory" class="form-control" />
+        <span asp-validation-for="Subcategory" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImgLink">Image Link</label>
+        <input asp-for="ImgLink" class="form-control" />
+        <span asp-validation-for="ImgLink" class="text-danger"></span>
+    </div>
+
     <div class="form-group">
         <input type="submit" value="Create" class="btn btn-primary" />
     </div>
 </form>
-
-<div>
-    <a asp-action="DisplayProducts">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
