@@ -86,28 +86,33 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateUser(string email, string password)
     {
-        if (ModelState.IsValid)
+        // Basic checks for email and password
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            var user = new IdentityUser { UserName = email, Email = email };
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                // User creation was successful
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                // Something failed, add errors to ModelState
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+            ModelState.AddModelError("", "Email and password are required.");
+            return View();  // Return to the form view with error messages.
         }
-        // Model state is invalid or user creation failed
-        return View();
+
+        // Create the user
+        var user = new IdentityUser { UserName = email, Email = email };
+        var result = await _userManager.CreateAsync(user, password);
+
+        if (result.Succeeded)
+        {
+            // If user creation was successful, redirect to the index (user list page)
+            return RedirectToAction(nameof(Index));
+        }
+        else
+        {
+            // If there were errors, add them to the ModelState to display in the view
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View();  // Return to the form view with error messages.
+        }
     }
+
     // GET: Admin/DeleteUser/5
     public async Task<IActionResult> DeleteUser(string id)
     {
@@ -150,8 +155,8 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditUser()
     {
-        var userId = _userManager.GetUserId(User); // Gets the current logged-in user ID
-        var user = await _userManager.FindByIdAsync(userId);
+        var Id = _userManager.GetUserId(User); // Gets the current logged-in user ID
+        var user = await _userManager.FindByIdAsync(Id);
 
         if (user == null)
         {
@@ -161,12 +166,15 @@ public class AdminController : Controller
         return View(user);
     }
 
+
+
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditUser(IdentityUser userFromForm)
     {
-        var userId = _userManager.GetUserId(User);
-        var user = await _userManager.FindByIdAsync(userId);
+        var Id = _userManager.GetUserId(User);
+        var user = await _userManager.FindByIdAsync(Id);
 
         if (user == null)
         {
@@ -199,4 +207,6 @@ public class AdminController : Controller
             return View(userFromForm);
         }
     }
+
+
 }

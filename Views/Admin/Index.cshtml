@@ -3,102 +3,17 @@ var usersWithRoles = ViewBag.UsersWithRoles as List<(string UserId, string Email
 var roles = ViewBag.Roles as SelectList;
 }
 
-<style>
-    body {
-        background-color: #f8f9fa; /* Light grey background for contrast */
-        font-family: 'Arial', sans-serif; /* Professional, clean font */
-        padding: 20px; /* Adds some padding around the content */
-    }
+<h2 class="text-center" style="color: #333; margin-bottom: 30px;">Manage User Roles</h2>
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px; /* Space between header and table */
-    }
-
-    .btn-outline-primary {
-        color: #007bff;
-        border: 1px solid #007bff;
-        padding: 6px 12px;
-        text-decoration: none;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    .btn-outline-primary:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .btn-secondary, .btn-outline-danger {
-        padding: 6px 12px;
-        text-decoration: none;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    .btn-secondary:hover {
-        background-color: #5a6268;
-        color: white;
-        border-color: #4e555b;
-    }
-
-    .btn-outline-danger {
-        color: #dc3545;
-        border: 1px solid #dc3545;
-    }
-
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse; /* Ensures borders between rows are merged */
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for 3D effect */
-    }
-
-    th, td {
-        padding: 12px; /* Uniform padding in table cells */
-        border-bottom: 1px solid #dee2e6; /* Light grey border for each row */
-        text-align: left; /* Align text to the left */
-    }
-
-    th {
-        background-color: #007bff; /* Blue background for header */
-        color: white; /* White text for contrast */
-    }
-
-    tbody tr:hover {
-        background-color: #f2f2f2; /* Light grey background on row hover */
-    }
-
-    .form-group {
-        margin-right: 10px; /* Spacing between form elements */
-    }
-
-    select.custom-select {
-        border: 1px solid #ced4da;
-        padding: 0.375rem 0.75rem;
-        border-radius: 0.25rem;
-    }
-
-    .form-inline {
-        display: flex;
-        align-items: center;
-    }
-</style>
-
-<div class="header">
-    <h2>Manage User Roles</h2>
+<div class="text-right mb-3">
+    <!-- Create New User Button at the top -->
     <button onclick="location.href='@Url.Action("CreateUser")'" class="btn btn-outline-primary">
         Create New User
     </button>
 </div>
 
-<table class="table">
-    <thead>
+<table class="table table-hover">
+    <thead style="background-color: #4e5d6c; color: #fff;">
     <tr>
         <th>Email</th>
         <th>Roles</th>
@@ -121,14 +36,14 @@ var roles = ViewBag.Roles as SelectList;
                 <select class="custom-select" name="roleName" asp-items="roles"></select>
             </div>
             <input type="hidden" name="userId" value="@user.UserId" />
-            <button type="submit" class="btn btn-outline-primary btn-sm">Assign</button>
+            <button type="submit" class="btn btn-sm btn-outline-success">Assign</button>
             }
         </td>
         <td>
-            <a href="@Url.Action("EditUser", new { userId = user.UserId })" class="btn btn-secondary btn-sm">Edit</a>
+            <a href="@Url.Action("EditUser", new { id = user.UserId })" class="btn btn-sm btn-outline-info">Edit</a>
         </td>
         <td>
-            <a href="@Url.Action("DeleteUser", "Admin", new { id = user.UserId })" class="btn btn-outline-danger btn-sm">
+            <a href="@Url.Action("DeleteUser", "Admin", new { id = user.UserId })" class="btn btn-sm btn-outline-danger">
                 Delete
             </a>
         </td>
@@ -136,3 +51,11 @@ var roles = ViewBag.Roles as SelectList;
     }
     </tbody>
 </table>
+
+
+
+@section Scripts {
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+</script>
+}

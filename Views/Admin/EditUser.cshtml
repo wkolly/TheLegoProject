@@ -1,25 +1,27 @@
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Microsoft.AspNetCore.Identity.IdentityUser
-
 @{
 ViewData["Title"] = "Edit User";
 }
 
-<h2>Edit User</h2>
-
-<form asp-action="EditUser">
-    <input type="hidden" asp-for="Id" />
+<div style="margin-bottom: 20px;">
+    <a href="#" onclick="history.back();" class="btn btn-link" style="color: #007BFF; text-decoration: none;">
+        &#x2190; Back
+    </a>
+</div>
+<h2>@ViewData["Title"]</h2>
+<form asp-action="EditUser" method="post">
+    @Html.AntiForgeryToken()
+    <!-- Hidden field for original email to identify the user -->
+    <input type="hidden" name="originalEmail" value="@Model.Email" />
 
     <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
+        <label for="email">New Email Address</label>
+        <input type="email" name="email" class="form-control" value="@Model.Email" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
-    <!-- Include other fields as necessary -->
-
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+    <div class="form-group" style="margin-top: 20px;">
+        <input type="submit" value="Update Email" class="btn btn-primary" />
     </div>
 </form>
 
