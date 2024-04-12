@@ -128,5 +128,69 @@ public class AdminController : Controller
         // User not found or some other issue
         return RedirectToAction(nameof(Index));
     }
+    // GET: Admin/EditUser/5
+    [HttpGet]
+    public async Task<IActionResult> EditUser(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return View("Error"); // Provide a suitable error view
+        }
+
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            return View("Error"); // Provide a suitable error view
+        }
+
+        // Pass the user directly to the view
+        return View(user);
+    }
+    // POST: Admin/EditUser/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditUser(string id, IdentityUser userToUpdate)
+    {
+        if (id != userToUpdate.Id)
+        {
+            return View("Error"); // Provide a suitable error view
+        }
+
+        if (ModelState.IsValid)
+        {
+            // Get the user from the database
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return View("Error"); // Provide a suitable error view
+            }
+
+            // Update the properties
+            user.Email = userToUpdate.Email;
+            user.UserName = userToUpdate.Email; // Assuming the username is the email
+
+            // ... other properties you want to update ...
+
+            // Save the changes
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+        
+            // If we got this far, something failed, redisplay form with error messages
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+    
+        // If model state is not valid, return the view with userToUpdate to show validation errors
+        return View(userToUpdate);
+    }
+
+
+
+
 
 }

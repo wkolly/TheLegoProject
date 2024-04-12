@@ -94,70 +94,70 @@ public class HomeController : Controller
         }
         
     }
-      public IActionResult Bag()
-    {
-        var records = _repo.Orders
-            .OrderByDescending(x => x.Date)
-            .Take(20)
-            .ToList();  // Fetch all records
-        var predictions = new List<ProductRecommendationViewModel>();  // Your ViewModel for the view
-        // Dictionary mapping the numeric prediction to an animal type
-        var class_type_dict = new Dictionary<int, string>
-       {
-           { 0, "not fraud" },
-           { 1, "fraud" }
-       };
-        foreach (var record in records)
-        {
-            float dateFloat = float.Parse(record.Date.GetHashCode().ToString());
-
-            var input = new List<float>
-            {
-                dateFloat,
-                (float)record.Time,
-                (float)record.Amount,1,
-                record.DayOfWeek == "Mon" ? 1 : 0,
-                record.DayOfWeek == "Sat" ? 1 : 0,
-                record.DayOfWeek == "Sun" ? 1 : 0,
-                record.DayOfWeek == "Thu" ? 1 : 0,
-                record.DayOfWeek == "Tue" ? 1 : 0,
-                record.DayOfWeek == "Wed" ? 1 : 0,
-                record.EntryMode == "PIN" ? 1 : 0,
-                record.EntryMode == "Tap" ? 1 : 0,
-                record.TypeOfTransaction == "Online" ? 1 : 0,
-                record.TypeOfTransaction == "POS" ? 1 : 0,
-                record.CountryOfTransaction == "India" ? 1 : 0,
-                record.CountryOfTransaction == "Russia" ? 1 : 0,
-                record.CountryOfTransaction == "USA" ? 1 : 0,
-                record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
-                record.ShippingAddress == "India" ? 1 : 0,
-                record.ShippingAddress == "Russia" ? 1 : 0,
-                record.ShippingAddress == "USA" ? 1 : 0,
-                record.ShippingAddress == "United Kingdom" ? 1 : 0,
-                record.Bank == "HSBC" ? 1 : 0,
-                record.Bank == "Halifax" ? 1 : 0,
-                record.Bank == "Lloyds" ? 1 : 0,
-                record.Bank == "Metro" ? 1 : 0,
-                record.Bank == "Monzo" ? 1 : 0,
-                record.Bank == "RBS" ? 1 : 0,
-                record.TypeOfCard == "Visa" ? 1 : 0
-            };
-            var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
-            
-            var inputs = new List<NamedOnnxValue>
-           {
-               NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
-           };
-            string predictionResult;
-            using (var results = _session.Run(inputs))
-            {
-                var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
-                predictionResult = prediction != null && prediction.Length > 0 ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
-            }
-            predictions.Add(new ProductRecommendationViewModel { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
-        }
-        return View(predictions);
-    }
+    //   public IActionResult Bag()
+    // {
+    //     var records = _repo.Orders
+    //         .OrderByDescending(x => x.Date)
+    //         .Take(20)
+    //         .ToList();  // Fetch all records
+    //     var predictions = new List<ProductRecommendationViewModel>();  // Your ViewModel for the view
+    //     // Dictionary mapping the numeric prediction to an animal type
+    //     var class_type_dict = new Dictionary<int, string>
+    //    {
+    //        { 0, "not fraud" },
+    //        { 1, "fraud" }
+    //    };
+    //     foreach (var record in records)
+    //     {
+    //         float dateFloat = float.Parse(record.Date.GetHashCode().ToString());
+    //
+    //         var input = new List<float>
+    //         {
+    //             dateFloat,
+    //             (float)record.Time,
+    //             (float)record.Amount,1,
+    //             record.DayOfWeek == "Mon" ? 1 : 0,
+    //             record.DayOfWeek == "Sat" ? 1 : 0,
+    //             record.DayOfWeek == "Sun" ? 1 : 0,
+    //             record.DayOfWeek == "Thu" ? 1 : 0,
+    //             record.DayOfWeek == "Tue" ? 1 : 0,
+    //             record.DayOfWeek == "Wed" ? 1 : 0,
+    //             record.EntryMode == "PIN" ? 1 : 0,
+    //             record.EntryMode == "Tap" ? 1 : 0,
+    //             record.TypeOfTransaction == "Online" ? 1 : 0,
+    //             record.TypeOfTransaction == "POS" ? 1 : 0,
+    //             record.CountryOfTransaction == "India" ? 1 : 0,
+    //             record.CountryOfTransaction == "Russia" ? 1 : 0,
+    //             record.CountryOfTransaction == "USA" ? 1 : 0,
+    //             record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
+    //             record.ShippingAddress == "India" ? 1 : 0,
+    //             record.ShippingAddress == "Russia" ? 1 : 0,
+    //             record.ShippingAddress == "USA" ? 1 : 0,
+    //             record.ShippingAddress == "United Kingdom" ? 1 : 0,
+    //             record.Bank == "HSBC" ? 1 : 0,
+    //             record.Bank == "Halifax" ? 1 : 0,
+    //             record.Bank == "Lloyds" ? 1 : 0,
+    //             record.Bank == "Metro" ? 1 : 0,
+    //             record.Bank == "Monzo" ? 1 : 0,
+    //             record.Bank == "RBS" ? 1 : 0,
+    //             record.TypeOfCard == "Visa" ? 1 : 0
+    //         };
+    //         var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
+    //         
+    //         var inputs = new List<NamedOnnxValue>
+    //        {
+    //            NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
+    //        };
+    //         string predictionResult;
+    //         using (var results = _session.Run(inputs))
+    //         {
+    //             var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
+    //             predictionResult = prediction != null && prediction.Length > 0 ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
+    //         }
+    //         predictions.Add(new ProductRecommendationViewModel { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+    //     }
+    //     return View(predictions);
+    // }
 
     public IActionResult Privacy()
     {

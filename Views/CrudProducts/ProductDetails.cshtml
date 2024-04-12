@@ -1,5 +1,12 @@
 @model TheLegoProject.Models.Product
 
+<!-- Back arrow link at the top of the page -->
+<div style="margin-bottom: 20px;">
+    <a href="#" onclick="history.back();" class="btn btn-link" style="color: #007BFF; text-decoration: none;">
+        &#x2190; Back
+    </a>
+</div>
+
 <div class="nav-pills" style="display: flex; align-items: start; margin-top: 50px">
     <img src="@Model.ImgLink" alt="@Model.Name" style="flex-shrink: 0; width:500px; height:auto; margin-right: 50px;">
     <div style="flex-grow: 1;">
