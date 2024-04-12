@@ -72,27 +72,28 @@
 </head>
 <body>
     <h2>Checkout</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="item-list">
+<table>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="item-list">
           
-            <!-- Add more rows for other products -->
+    <!-- Add more rows for other products -->
             
-        </tbody>
-        <tfoot>
-            <tr class="total-row">
-                <td colspan="3">Total</td>
-                <td id="total">$15.00</td>
-            </tr>
-        </tfoot>
-    </table>
+    </tbody>
+    <tfoot>
+    <tr class="total-row">
+        <td colspan="3">Total</td>
+        <td id="total">$15.00</td>
+    </tr>
+    </tfoot>
+</table>
+
 <a class="btn btn-primary" id="checkout-button" asp-area="" asp-controller="Home" asp-action="Checkout">Proceed to Checkout</a>
     <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Continue Shopping</a>
     <!-- Include Font Awesome -->
@@ -173,7 +174,15 @@
             });
             document.getElementById('total').textContent = '$' + total.toFixed(2);
         }
-        document.getElementById('checkout-button').onclick = clearCartAndCheckout;
+        
+        document.getElementById('checkout-button').addEventListener('click', function(event) {
+            var confirmAction = confirm('Are you sure you want to proceed to checkout?');
+            if (!confirmAction) {
+                event.preventDefault();
+            }
+        });
+    
+
 
         loadCart();
     </script>
