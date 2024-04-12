@@ -237,31 +237,31 @@ public class HomeController : Controller
 
 
 
-    public IActionResult Predict(int customer, int time, int amount, int date_11, int date3, int date7, int date8,
-        int Mon, int Sat, int Sun,
-        int Thur, int Tue, int Wed, string entryPin, string entryTap, string typetransactiononline,
-        string typeoftransactionPOS, string countryoftransactionIndia, string countryoftransactionRussia,
-        string countryoftransaction_USA, string country_of_transaction_United_Kingdom, string shipping_address_India,
-        string shipping_address_Russia, string shipping_address_USA, string shipping_address_United_Kingdom,
-        string bank_HSBC, string bank_Halifax, string bank_Lloyds, string bank_Metro, string bank_Monzo,
-        string bank_RBS, string type_of_card_Visa)
-    {
-        var class_type_dict = new Dictionary<int, string>
-        {
-            { 0, "not fraud" },
-            { 1, "fraud" }
-        };
-
-        try
-        {
-            var input = new List<float>();
-        }
-        catch (Exception)
-        {
-            Console.WriteLine();
-            throw;
-        }
-    }
+    // public IActionResult Predict(int customer, int time, int amount, int date_11, int date3, int date7, int date8,
+    //     int Mon, int Sat, int Sun,
+    //     int Thur, int Tue, int Wed, string entryPin, string entryTap, string typetransactiononline,
+    //     string typeoftransactionPOS, string countryoftransactionIndia, string countryoftransactionRussia,
+    //     string countryoftransaction_USA, string country_of_transaction_United_Kingdom, string shipping_address_India,
+    //     string shipping_address_Russia, string shipping_address_USA, string shipping_address_United_Kingdom,
+    //     string bank_HSBC, string bank_Halifax, string bank_Lloyds, string bank_Metro, string bank_Monzo,
+    //     string bank_RBS, string type_of_card_Visa)
+    // {
+    //     var class_type_dict = new Dictionary<int, string>
+    //     {
+    //         { 0, "not fraud" },
+    //         { 1, "fraud" }
+    //     };
+    //
+    //     try
+    //     {
+    //         var input = new List<float>();
+    //     }
+    //     catch (Exception)
+    //     {
+    //         Console.WriteLine();
+    //         throw;
+    //     }
+    // }
 
     public IActionResult Privacy()
         {
