@@ -1,47 +1,45 @@
-@model IEnumerable<TheLegoProject.Models.OrderPrediction>
+@model TheLegoProject.Models.ViewModels.ProductRecommendationViewModel
 
 @{
-    ViewData["Title"] ="Predictions" ;
-    var classTypeDict = new Dictionary<int, string>
-    {
-        { 0, "Not Fraud" },
-        { 1, "Fraud" }
-    };
+    ViewData["Title"] = "Order Receipt";
 }
-<h2>Predictions</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>TransactionId</th>
-            <th>CustomerId</th>
-            <th>Date</th>
-            <th>DayOfWeek</th>
-            <th>Time</th>
-            <th>Amount</th>
-            <th>TypeOfTransaction</th>
-            <th>Bank</th>
-            <th>TypeOfCard</th>
-            <th>Fraud</th>
-            <th class = "prediction-cell">Fraud Prediction</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Orders.TransactionId </td>
-                <td>@item.Orders.CustomerId </td>
-                <td>@item.Orders.Date </td>
-                <td>@item.Orders.DayOfWeek </td>
-                <td>@item.Orders.Time </td>
-                <td>@item.Orders.Amount </td>
-                <td>@item.Orders.TypeOfTransaction </td>
-                <td>@item.Orders.Bank </td>
-                <td>@item.Orders.TypeOfCard </td>
-                <td>@item.Orders.Fraud </td>
-                <td class="prediction-cell">@item.Prediction</td>
-            </tr>    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Receipt</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
         }
-    </tbody>
-</table>
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 40px auto;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Order Receipt</h1>
+
+    <div class="alert alert-success" role="alert">
+        Sorry we have too many orders at this time, and can't accept more orders.
+    </div>
+
+    <a href="/" class="btn btn-primary">Continue Shopping</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</body>
+</html>

@@ -231,8 +231,12 @@ public class HomeController : Controller
                 Orders = record, Prediction = predictionResult
             }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
         }
+<<<<<<< Updated upstream
 
         return View(predictions);
+=======
+        return View();
+>>>>>>> Stashed changes
     }
 
 

@@ -29,5 +29,6 @@ namespace TheLegoProject.Models
         Task SaveChangesAsync();
         
         void SaveChanges(Order newOrder);
+       
     }
 }
