@@ -42,6 +42,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>().AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
 builder.Services.AddHsts(options =>
 {
     options.Preload = true;
@@ -54,6 +55,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+
 
 var app = builder.Build();
 
