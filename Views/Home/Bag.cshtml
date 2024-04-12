@@ -1,5 +1,4 @@
 @model List<ProductRecommendationViewModel>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,28 +71,28 @@
 </head>
 <body>
     <h2>Checkout</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="item-list">
+<table>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="item-list">
           
-            <!-- Add more rows for other products -->
+    <!-- Add more rows for other products -->
             
-        </tbody>
-        <tfoot>
-            <tr class="total-row">
-                <td colspan="3">Total</td>
-                <td id="total">$15.00</td>
-            </tr>
-        </tfoot>
-    </table>
-    <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Checkout">Proceed to Checkout</a>
+    </tbody>
+    <tfoot>
+    <tr class="total-row">
+        <td colspan="3">Total</td>
+        <td id="total">$15.00</td>
+    </tr>
+    </tfoot>
+</table>
+<a class="btn btn-primary" id="checkout-button" asp-area="" asp-controller="Home" asp-action="Checkout">Proceed to Checkout</a>
     <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Continue Shopping</a>
     <!-- Include Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
@@ -161,8 +160,6 @@
         function clearCartAndCheckout() {
             sessionStorage.removeItem('cart'); // This clears the entire cart from the session storage after checkout
         }
-
-
         function updateTotal() {
             var total = 0;
             var items = document.querySelectorAll('#item-list tr');
@@ -176,10 +173,14 @@
         
         document.getElementById('checkout-button').addEventListener('click', function(event) {
             var confirmAction = confirm('Are you sure you want to proceed to checkout?');
-            if (!confirmAction) {
-                event.preventDefault();
+            if (confirmAction) {
+                clearCartAndCheckout(); // Clears the cart if user confirms action
+            } else {
+                event.preventDefault(); // Prevents proceeding to checkout if user cancels
             }
         });
+
+    
         loadCart();
     </script>
 </body>

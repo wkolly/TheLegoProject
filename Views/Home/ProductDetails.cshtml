@@ -6,29 +6,28 @@
         ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
     };
     var jsonModel = Newtonsoft.Json.JsonConvert.SerializeObject(Model, settings);
+    
+    
+    
 }
-
 <div class="nav-pills" style="display: flex; align-items: start; margin-top: 50px">
     <img src="@Model.ImgLink" alt="@Model.Name" style="flex-shrink: 0; width:500px; height:auto; margin-right: 50px;">
     <!-- Flex container for the title and button -->
-    <div>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <button id="addToBagButton" class="btn btn-secondary" onclick="addToCart(@jsonModel)">
-            Add to Bag
-        </button>
+       
+    
+    <div style="flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h2>@Model.Name</h2>
+            <h3 style="font-weight: bold">$@Model.Price</h3>
+            
+            <button id="addToBagButton" class="btn btn-secondary"  onclick="addToCart(@jsonModel)">
+                Add to Bag
+            </button>
+            
+        </div>
+        
     </div>
-  <div style="flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start;">
-    <div>
-      <h2>@Model.Name</h2>
-      <h3 style="font-weight: bold">$@Model.Price</h3>
-      <!-- Rest of your content -->
-    </div>
-  </div>
+     
     @section Scripts {
         <script>
             function addToCart(product) {
@@ -44,11 +43,12 @@
     }
     <div class="accordion" id="accordionExample">
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Description
-          </button>
-        </h2>
+          <h2 class="accordion-header" id="headingOne">
+              <br/>
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Description
+              </button>
+          </h2>
         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
           <div class="accordion-body">
             @Model.Description
