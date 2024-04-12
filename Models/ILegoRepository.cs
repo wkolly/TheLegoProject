@@ -24,5 +24,10 @@ namespace TheLegoProject.Models
 
         // Delete a product by ID
         void DeleteProduct(int productId);
+        
+        Order AddOrder(Order order);
+        Task SaveChangesAsync();
+        
+        void SaveChanges(Order newOrder);
     }
 }
