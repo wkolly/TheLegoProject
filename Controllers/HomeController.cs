@@ -17,24 +17,33 @@ namespace TheLegoProject.Controllers;
 public class HomeController : Controller
 {
     
-    private readonly ILegoRepository _repo;
-    private InferenceSession _session; 
-        
-    public HomeController(ILegoRepository temp)
+    private ILegoRepository _repo;
+    private readonly InferenceSession _session;
+    private readonly string _onnxModelPath;
+
+    public HomeController(ILegoRepository temp, IHostEnvironment hostEnvironment)
     {
         _repo = temp;
-        try
-        {
-            string currentDirectory = Directory.GetCurrentDirectory();
-            string onnxFilePath = Path.Combine(currentDirectory, "decision_tree_model.onnx");
-            _session = new InferenceSession(onnxFilePath);
-        }
-        catch (Exception)
-        {
-            Console.WriteLine();
-            throw;
-        }
+
+        _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model.onnx");
+        _session = new InferenceSession(_onnxModelPath);
     }
+    
+    // public HomeController(ILegoRepository temp)
+    // {
+    //     _repo = temp;
+    //     try
+    //     {
+    //         string currentDirectory = Directory.GetCurrentDirectory();
+    //         string onnxFilePath = Path.Combine(currentDirectory, "decision_tree_model.onnx");
+    //         _session = new InferenceSession(onnxFilePath);
+    //     }
+    //     catch (Exception)
+    //     {
+    //         Console.WriteLine();
+    //         throw;
+    //     }
+    // }
     
     public IActionResult Index()
     {
@@ -94,28 +103,29 @@ public class HomeController : Controller
         }
         
     }
-      public IActionResult Bag()
+      public IActionResult ReviewOrders()
     {
         var records = _repo.Orders
-            .OrderByDescending(x => x.Date)
+            .OrderByDescending(o => o.Date)
             .Take(20)
             .ToList();  // Fetch all records
-        var predictions = new List<ProductRecommendationViewModel>();  // Your ViewModel for the view
+        var predictions = new List<OrderPrediction>();  // Your ViewModel for the view
         // Dictionary mapping the numeric prediction to an animal type
         var class_type_dict = new Dictionary<int, string>
-       {
-           { 0, "not fraud" },
-           { 1, "fraud" }
-       };
+           {
+               { 0, "Not fraud" },
+               { 1, "Fraud" }
+           };
         foreach (var record in records)
         {
             float dateFloat = float.Parse(record.Date.GetHashCode().ToString());
 
             var input = new List<float>
             {
+                (int)record.CustomerId,
+                (int)record.Time,
+                (float)(record.Amount ?? 0),
                 dateFloat,
-                (float)record.Time,
-                (float)record.Amount,1,
                 record.DayOfWeek == "Mon" ? 1 : 0,
                 record.DayOfWeek == "Sat" ? 1 : 0,
                 record.DayOfWeek == "Sun" ? 1 : 0,
@@ -130,10 +140,12 @@ public class HomeController : Controller
                 record.CountryOfTransaction == "Russia" ? 1 : 0,
                 record.CountryOfTransaction == "USA" ? 1 : 0,
                 record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
-                record.ShippingAddress == "India" ? 1 : 0,
-                record.ShippingAddress == "Russia" ? 1 : 0,
-                record.ShippingAddress == "USA" ? 1 : 0,
-                record.ShippingAddress == "United Kingdom" ? 1 : 0,
+                
+                (record.ShippingAddress ?? record.CountryOfTransaction) == "India" ? 1 : 0,
+                (record.ShippingAddress ?? record.CountryOfTransaction) == "Russia" ? 1 : 0,
+                (record.ShippingAddress ?? record.CountryOfTransaction) == "USA" ? 1 : 0,
+                (record.ShippingAddress ?? record.CountryOfTransaction) == "UnitedKingdom" ? 1 : 0,
+                
                 record.Bank == "HSBC" ? 1 : 0,
                 record.Bank == "Halifax" ? 1 : 0,
                 record.Bank == "Lloyds" ? 1 : 0,
@@ -154,7 +166,7 @@ public class HomeController : Controller
                 var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
                 predictionResult = prediction != null && prediction.Length > 0 ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
             }
-            predictions.Add(new ProductRecommendationViewModel { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+            predictions.Add(new OrderPrediction { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
         }
         return View(predictions);
     }
@@ -284,12 +296,7 @@ public class HomeController : Controller
         return "/images/default.jpg";
     }
 
-    public IActionResult Checkout()
-    {
-        return View();
-    }
-
-    public IActionResult Bag()
+    public IActionResult Receipt()
     {
         return View();
     }
