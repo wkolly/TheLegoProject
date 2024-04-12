@@ -8,15 +8,20 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using TheLegoProject.Models;
 using TheLegoProject.Models.ViewModels;
+
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using TheLegoProject.Infrastructure;
+using System;
+
+using Microsoft.ML.OnnxRuntime.Tensors; 
+
 
 namespace TheLegoProject.Controllers;
 
 public class HomeController : Controller
 {
-    
+
     private ILegoRepository _repo;
     private readonly InferenceSession _session;
     private readonly string _onnxModelPath;
@@ -28,7 +33,7 @@ public class HomeController : Controller
         _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model.onnx");
         _session = new InferenceSession(_onnxModelPath);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Checkout(ProductRecommendationViewModel model)
     {
@@ -41,16 +46,16 @@ public class HomeController : Controller
         // this line assumes model.Amount correctly holds the total to be charged
         // If model.Amount does not exist and you need to calculate it based on items,
         // you would need a different approach possibly involving a list of items in the model.
-    
+
         var order = new Order
         {
             // TransactionId should be auto-generated if it's an identity column in the database,
             // so no need to set it here unless you are overriding database defaults.
             CustomerId = model.CustomerId,
-            Date = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+            //Date = DateTime.UtcNow.ToString("yyyy-MM-dd"),
             DayOfWeek = DateTime.UtcNow.DayOfWeek.ToString(),
             Time = DateTime.UtcNow.Hour,
-            EntryMode = "Online",  // This should match your business logic or data model requirements
+            EntryMode = "Online", // This should match your business logic or data model requirements
             Amount = model.Amount, // This should be a decimal or double type in your Order model
             TypeOfTransaction = "Sale",
             CountryOfTransaction = "USA",
@@ -68,6 +73,24 @@ public class HomeController : Controller
         return RedirectToAction("Checkout", new { orderId = order.TransactionId });
     }
     
+
+    public HomeController(ILegoRepository temp)
+    {
+        _repo = temp;
+        try
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string onnxFilePath = Path.Combine(currentDirectory, "decision_tree_model.onnx");
+            _session = new InferenceSession(onnxFilePath);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine();
+            throw;
+        }
+
+    }
+
     public IActionResult Index()
     {
         if (User.Identity.IsAuthenticated)
@@ -81,7 +104,8 @@ public class HomeController : Controller
                 .ToList(); // Bring into memory to use client-side evaluation for the next operations
 
             var productNames = customerRecommendations
-                .SelectMany(c => new[] { c.Rec1, c.Rec2, c.Rec3, c.Rec4, c.Rec5 }) // Now we're in-memory, so SelectMany will work
+                .SelectMany(c => new[]
+                    { c.Rec1, c.Rec2, c.Rec3, c.Rec4, c.Rec5 }) // Now we're in-memory, so SelectMany will work
                 .Distinct();
 
             var personalizedRecData = _repo.Products
@@ -99,11 +123,11 @@ public class HomeController : Controller
             return View(personalizedRecData);
 
         }
-        
+
         else
         {
             var recData = _repo.Recommendations
-                .Join(_repo.Products, 
+                .Join(_repo.Products,
                     recommendation => recommendation.ProductId, // Assuming a common key exists
                     product => product.ProductId, // Replace with the actual common key
                     (recommendation, product) => new ProductRecommendationViewModel
@@ -124,31 +148,40 @@ public class HomeController : Controller
 
             return View(recData);
         }
-        
+
     }
-      public IActionResult ReviewOrders()
+
+    public IActionResult ReviewOrders()
     {
         var records = _repo.Orders
             .OrderByDescending(o => o.Date)
             .Take(20)
-            .ToList();  // Fetch all records
-        var predictions = new List<OrderPrediction>();  // Your ViewModel for the view
+            .ToList(); // Fetch all records
+        var predictions = new List<OrderPrediction>(); // Your ViewModel for the view
         // Dictionary mapping the numeric prediction to an animal type
         var class_type_dict = new Dictionary<int, string>
-           {
-               { 0, "Not fraud" },
-               { 1, "Fraud" }
-           };
+        {
+            { 0, "Not fraud" },
+            { 1, "Fraud" }
+        };
         foreach (var record in records)
         {
             float dateFloat = float.Parse(record.Date.GetHashCode().ToString());
 
+            var january1_2022 = new DateTime(2022, 1, 1);
+
+
+            var daysSinceJan12022 = record.Date.HasValue ? Math.Abs((record.Date.Value - january1_2022).Days) : 0;
+
+
             var input = new List<float>
             {
+
                 (int)record.CustomerId,
                 (int)record.Time,
                 (float)(record.Amount ?? 0),
                 dateFloat,
+                daysSinceJan12022,
                 record.DayOfWeek == "Mon" ? 1 : 0,
                 record.DayOfWeek == "Sat" ? 1 : 0,
                 record.DayOfWeek == "Sun" ? 1 : 0,
@@ -163,12 +196,12 @@ public class HomeController : Controller
                 record.CountryOfTransaction == "Russia" ? 1 : 0,
                 record.CountryOfTransaction == "USA" ? 1 : 0,
                 record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
-                
+
                 (record.ShippingAddress ?? record.CountryOfTransaction) == "India" ? 1 : 0,
                 (record.ShippingAddress ?? record.CountryOfTransaction) == "Russia" ? 1 : 0,
                 (record.ShippingAddress ?? record.CountryOfTransaction) == "USA" ? 1 : 0,
                 (record.ShippingAddress ?? record.CountryOfTransaction) == "UnitedKingdom" ? 1 : 0,
-                
+
                 record.Bank == "HSBC" ? 1 : 0,
                 record.Bank == "Halifax" ? 1 : 0,
                 record.Bank == "Lloyds" ? 1 : 0,
@@ -178,170 +211,208 @@ public class HomeController : Controller
                 record.TypeOfCard == "Visa" ? 1 : 0
             };
             var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
-            
+
             var inputs = new List<NamedOnnxValue>
-           {
-               NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
-           };
+            {
+                NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
+            };
             string predictionResult;
             using (var results = _session.Run(inputs))
             {
-                var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
-                predictionResult = prediction != null && prediction.Length > 0 ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
+                var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>()
+                    .ToArray();
+                predictionResult = prediction != null && prediction.Length > 0
+                    ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown")
+                    : "Error in prediction";
             }
-            predictions.Add(new OrderPrediction { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+
+            predictions.Add(new OrderPrediction
+            {
+                Orders = record, Prediction = predictionResult
+            }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
         }
+
         return View(predictions);
     }
 
+
+
+    // public IActionResult Predict(int customer, int time, int amount, int date_11, int date3, int date7, int date8,
+    //     int Mon, int Sat, int Sun,
+    //     int Thur, int Tue, int Wed, string entryPin, string entryTap, string typetransactiononline,
+    //     string typeoftransactionPOS, string countryoftransactionIndia, string countryoftransactionRussia,
+    //     string countryoftransaction_USA, string country_of_transaction_United_Kingdom, string shipping_address_India,
+    //     string shipping_address_Russia, string shipping_address_USA, string shipping_address_United_Kingdom,
+    //     string bank_HSBC, string bank_Halifax, string bank_Lloyds, string bank_Metro, string bank_Monzo,
+    //     string bank_RBS, string type_of_card_Visa)
+    // {
+    //     var class_type_dict = new Dictionary<int, string>
+    //     {
+    //         { 0, "not fraud" },
+    //         { 1, "fraud" }
+    //     };
+    //
+    //     try
+    //     {
+    //         var input = new List<float>();
+    //     }
+    //     catch (Exception)
+    //     {
+    //         Console.WriteLine();
+    //         throw;
+    //     }
+    // }
+
     public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    public IActionResult AboutUs()
-    {
-        return View();
-       
-    }
-    
-    public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "", string selectedColor = "")
-    {
-        Console.WriteLine(pageSize);
-        
-        pageSize ??= 5;
-        Console.WriteLine(pageSize);// Default to 5 if no value is provided
-        var pageSizeOptions = new List<int> { 5, 10, 15 }; // The available page size options
-        
-        // Filter based on category and color
-        var filteredProducts = _repo.Products.AsQueryable();
-
-        if (!string.IsNullOrEmpty(selectedCategory))
         {
-            filteredProducts = filteredProducts.Where(p => p.Category == selectedCategory);
+            return View();
         }
 
-        if (!string.IsNullOrEmpty(selectedColor))
+        public IActionResult AboutUs()
         {
-            filteredProducts = filteredProducts.Where(p => p.PrimaryColor == selectedColor);
+            return View();
+
         }
 
-        // Get distinct categories and colors for the dropdowns
-        var categories = _repo.Products.Select(p => p.Category).Distinct().ToList();
-        var colors = _repo.Products.Select(p => p.PrimaryColor).Distinct().ToList();
-
-        // Apply pagination after filtering
-        var paginatedProducts = filteredProducts
-            .OrderBy(x => x.Name)
-            .Skip((pageNum - 1) * pageSize.Value)
-            .Take(pageSize.Value)
-            .ToList(); // Convert to list here, assuming the repository call doesn't execute immediately
-
-        var viewModel = new ProductsListViewModel
+        public IActionResult Products(int pageNum = 1, int? pageSize = null, string selectedCategory = "",
+            string selectedColor = "")
         {
-            Products = paginatedProducts,
-            PaginationInfo = new PaginationInfo
-            {
-                CurrentPage = pageNum,
-                ItemsPerPage = pageSize.Value,
-                TotalItems = filteredProducts.Count() // Count the filtered list
-            },
-            PageSizeOptions = pageSizeOptions,
-            SelectedCategory = selectedCategory,
-            SelectedColor = selectedColor,
-            Categories = categories,
-            Colors = colors
-        };
+            Console.WriteLine(pageSize);
 
-        return View(viewModel);
-    }
-    
-    public IActionResult ProductDetails(string id)
-    {
-    var productRecommendation = _repo.Products
-        .Join(
-            _repo.Recommendations,
-            product => product.ProductId,
-            recommendation => recommendation.ProductId,
-            (product, recommendation) => new ProductRecommendationViewModel
+            pageSize ??= 5;
+            Console.WriteLine(pageSize); // Default to 5 if no value is provided
+            var pageSizeOptions = new List<int> { 5, 10, 15 }; // The available page size options
+
+            // Filter based on category and color
+            var filteredProducts = _repo.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(selectedCategory))
             {
-                ProductId = product.ProductId,
-                Name = product.Name,
-                ImgLink = product.ImgLink,
-                Price = product.Price,
-                PopScore = recommendation.PopScore,
-                Rec1 = recommendation.Rec1,
-                Rec2 = recommendation.Rec2,
-                Rec3 = recommendation.Rec3,
-                Rec4 = recommendation.Rec4,
-                Rec5 = recommendation.Rec5,
-                PrimaryColor = product.PrimaryColor,
-                SecondaryColor = product.SecondaryColor,
-                Description = product.Description,
-                Category = product.Category,
-                Subcategory = product.Subcategory,
-                Year = product.Year,
-                NumParts = product.NumParts,
-                Rec1ImgLink = GetImageLink(recommendation.Rec1),
-                Rec2ImgLink = GetImageLink(recommendation.Rec2),
-                Rec3ImgLink = GetImageLink(recommendation.Rec3),
-                Rec4ImgLink = GetImageLink(recommendation.Rec4),
-                Rec5ImgLink = GetImageLink(recommendation.Rec5)
+                filteredProducts = filteredProducts.Where(p => p.Category == selectedCategory);
             }
-        )
-        .FirstOrDefault(pr => pr.Name == id);
 
-    if (productRecommendation == null)
-    {
-        return NotFound();
-    }
+            if (!string.IsNullOrEmpty(selectedColor))
+            {
+                filteredProducts = filteredProducts.Where(p => p.PrimaryColor == selectedColor);
+            }
 
-    return View("ProductDetails", productRecommendation);
-}
+            // Get distinct categories and colors for the dropdowns
+            var categories = _repo.Products.Select(p => p.Category).Distinct().ToList();
+            var colors = _repo.Products.Select(p => p.PrimaryColor).Distinct().ToList();
 
-    private static string GetImageLink(string productName)
-    {
-        if (string.IsNullOrEmpty(productName))
+            // Apply pagination after filtering
+            var paginatedProducts = filteredProducts
+                .OrderBy(x => x.Name)
+                .Skip((pageNum - 1) * pageSize.Value)
+                .Take(pageSize.Value)
+                .ToList(); // Convert to list here, assuming the repository call doesn't execute immediately
+
+            var viewModel = new ProductsListViewModel
+            {
+                Products = paginatedProducts,
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize.Value,
+                    TotalItems = filteredProducts.Count() // Count the filtered list
+                },
+                PageSizeOptions = pageSizeOptions,
+                SelectedCategory = selectedCategory,
+                SelectedColor = selectedColor,
+                Categories = categories,
+                Colors = colors
+            };
+
+            return View(viewModel);
+        }
+
+        public IActionResult ProductDetails(string id)
         {
+            var productRecommendation = _repo.Products
+                .Join(
+                    _repo.Recommendations,
+                    product => product.ProductId,
+                    recommendation => recommendation.ProductId,
+                    (product, recommendation) => new ProductRecommendationViewModel
+                    {
+                        ProductId = product.ProductId,
+                        Name = product.Name,
+                        ImgLink = product.ImgLink,
+                        Price = product.Price,
+                        PopScore = recommendation.PopScore,
+                        Rec1 = recommendation.Rec1,
+                        Rec2 = recommendation.Rec2,
+                        Rec3 = recommendation.Rec3,
+                        Rec4 = recommendation.Rec4,
+                        Rec5 = recommendation.Rec5,
+                        PrimaryColor = product.PrimaryColor,
+                        SecondaryColor = product.SecondaryColor,
+                        Description = product.Description,
+                        Category = product.Category,
+                        Subcategory = product.Subcategory,
+                        Year = product.Year,
+                        NumParts = product.NumParts,
+                        Rec1ImgLink = GetImageLink(recommendation.Rec1),
+                        Rec2ImgLink = GetImageLink(recommendation.Rec2),
+                        Rec3ImgLink = GetImageLink(recommendation.Rec3),
+                        Rec4ImgLink = GetImageLink(recommendation.Rec4),
+                        Rec5ImgLink = GetImageLink(recommendation.Rec5)
+                    }
+                )
+                .FirstOrDefault(pr => pr.Name == id);
+
+            if (productRecommendation == null)
+            {
+                return NotFound();
+            }
+
+            return View("ProductDetails", productRecommendation);
+        }
+
+        private static string GetImageLink(string productName)
+        {
+            if (string.IsNullOrEmpty(productName))
+            {
+                return "/images/default.jpg";
+            }
+
+            using (var context = new LegoDatabase2Context())
+            {
+                var product = context.Products.FirstOrDefault(p => p.Name == productName);
+
+                if (product != null && !string.IsNullOrEmpty(product.ImgLink))
+                {
+                    return product.ImgLink;
+                }
+            }
+
             return "/images/default.jpg";
         }
 
-        using (var context = new LegoDatabase2Context())
+        public IActionResult Checkout(string id)
         {
-            var product = context.Products.FirstOrDefault(p => p.Name == productName);
-
-            if (product != null && !string.IsNullOrEmpty(product.ImgLink))
+            // Check if the user is logged in
+            if (!User.Identity.IsAuthenticated)
             {
-                return product.ImgLink;
+                // If the user is not logged in, redirect them to the home page
+                return RedirectToAction("Index", "Home");
             }
+
+            // If the user is logged in, display the Checkout view
+            return View();
         }
 
-        return "/images/default.jpg";
-    }
-
-    public IActionResult Checkout(string id)
-    {
-        // Check if the user is logged in
-        if (!User.Identity.IsAuthenticated)
+        public IActionResult Bag()
         {
-            // If the user is not logged in, redirect them to the home page
-            return RedirectToAction("Index", "Home");
+            return View();
         }
 
-        // If the user is logged in, display the Checkout view
-        return View();
+
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
-
-    public IActionResult Bag()
-    {
-        return View();
-    }
-
-
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-}
+ 

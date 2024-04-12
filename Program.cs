@@ -4,12 +4,12 @@ using TheLegoProject.Data;
 using TheLegoProject.Models;
 
 
-
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
 
+// Add the secrets.json file.
 // Add the secrets.json file.
 builder.Configuration.AddJsonFile("secrets.json",
     optional: false,
@@ -22,6 +22,9 @@ services.AddAuthentication().AddGoogle(googleOptions =>
 });
 
 
+
+
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -32,6 +35,15 @@ builder.Services.AddDbContext<LegoDatabase2Context>(options =>
 {
     options.UseSqlite(builder.Configuration["ConnectionStrings=legoConnection"]);
 });
+
+// var cb = new SqlConnectionStringBuilder(connectionString);
+// cb.UserID = builder.Configuration.GetSection("sql:username").Value;
+// cb.Password = builder.Configuration.GetSection("sql:password").Value;
+// connectionString = cb.ConnectionString;
+//
+// builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseSqlServer(connectionString));
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -85,6 +97,13 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
+services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+    options.HttpsPort = 443;
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
