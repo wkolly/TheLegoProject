@@ -124,6 +124,11 @@ app.Use (async (ctx, next) =>
                  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap; " +
                  "font-src 'self' https://fonts.gstatic.com; " +
                  "img-src 'self' data: https://m.media-amazon.com https://www.lego.com https://images.brickset.com https://www.brickeconomy.com;";
+    // Add security headers
+    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
+    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    
     if (ctx.Request.IsHttps || app.Environment.IsDevelopment())
     {
         ctx.Response.Headers.Add("Content-Security-Policy", csp);

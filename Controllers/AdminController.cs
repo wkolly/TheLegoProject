@@ -147,69 +147,56 @@ public class AdminController : Controller
 
         return View("Error"); // User not found or some other issue
     }
-    // GET: Admin/EditUser/5
     [HttpGet]
-    public async Task<IActionResult> EditUser(string id)
+    public async Task<IActionResult> EditUser()
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            return View("Error"); // Provide a suitable error view
-        }
+        var userId = _userManager.GetUserId(User); // Gets the current logged-in user ID
+        var user = await _userManager.FindByIdAsync(userId);
 
-        var user = await _userManager.FindByIdAsync(id);
         if (user == null)
         {
-            return View("Error"); // Provide a suitable error view
+            return View("Error");
         }
 
-        // Pass the user directly to the view
         return View(user);
     }
-    // POST: Admin/EditUser/5
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditUser(string id, IdentityUser userToUpdate)
+    public async Task<IActionResult> EditUser(IdentityUser userFromForm)
     {
-        if (id != userToUpdate.Id)
+        var userId = _userManager.GetUserId(User);
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
         {
-            return View("Error"); // Provide a suitable error view
+            return View("Error");
         }
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            // Get the user from the database
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return View("Error"); // Provide a suitable error view
-            }
+            return View(userFromForm);
+        }
 
-            // Update the properties
-            user.Email = userToUpdate.Email;
-            user.UserName = userToUpdate.Email; // Assuming the username is the email
+        // Update the properties you want to change
+        user.Email = userFromForm.Email;
+        // Assume we allow the user to change their email and UserName
+        user.UserName = userFromForm.Email;
 
-            // ... other properties you want to update ...
+        // Save the changes
+        var result = await _userManager.UpdateAsync(user);
 
-            // Save the changes
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-        
-            // If we got this far, something failed, redisplay form with error messages
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index");
+        }
+        else
+        {
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+            return View(userFromForm);
         }
-    
-        // If model state is not valid, return the view with userToUpdate to show validation errors
-        return View(userToUpdate);
     }
-
-
-
-
-
 }
